@@ -122,7 +122,7 @@ export class HomeComponent implements OnInit {
 
 	}
   singleItemIndropZone(seats:any){
-    console.log(this.Seats)
+   // console.log(this.Seats)
     let extraSeats:any=[]
     let mainIndex:any
 
@@ -132,19 +132,38 @@ export class HomeComponent implements OnInit {
         mainIndex=index+1
         if(mainIndex===this.Seats.length){
           mainIndex=0
+          if(this.Seats[mainIndex].children.length){
+            mainIndex=mainIndex+1
+          }
         }
-        console.log('mainIndex',mainIndex)
+      //  console.log('mainIndex',mainIndex)
         ele.children=ele.children.filter((first:any,i:any)=>{
-          if(i===0){
-            return ele.children[0]
+          let firstIndex=0
+          if(i===firstIndex){
+            return ele.children[firstIndex]
           }
           extraSeats.push(ele.children[i])
         })
-        console.log(ele.children)
+   //     console.log(ele.children)
       }
     })
-    console.log('extraSeat',extraSeats)
+  //  console.log('extraSeat',extraSeats)
+
     if(extraSeats.length){
+      for(let item in this.Seats){
+        console.log(this.Seats[mainIndex].children.length)
+        if(this.Seats[mainIndex].children.length){
+          mainIndex=mainIndex+1
+        }
+        if(mainIndex===this.Seats.length){
+          mainIndex=0
+          if(this.Seats[mainIndex].children.length){
+            mainIndex=mainIndex+1
+          }
+        }
+      }
+
+      console.log('mainIndex',mainIndex)
       this.Seats[mainIndex].children=[... new Set(extraSeats)]
     }
 
