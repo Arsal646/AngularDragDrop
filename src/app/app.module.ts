@@ -4,17 +4,17 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
-import { TestComponent } from './test/test.component';
+import { HomeComponent } from 'src/pages/home/home.component';
 @NgModule({
   declarations: [
     AppComponent,
-    TestComponent
+    HomeComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     DragDropModule
-    
+
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,39 @@
+<div class="heading">
+    <h1>Ticket Management System</h1>
+</div>
+<div cdkDropListGroup style="display: flex;">
+    <div class="col">
+        <div class="example-container" *ngFor="let f of Seats">
+            <div>
+                <h2>{{f?.item}}</h2>
+                <div class="example-list" ngClass="example-list"  *ngIf="f.children"
+                    [cdkDropListEnterPredicate]="f.children.length ? False:True" cdkDropList
+                    [cdkDropListData]="f.children" (cdkDropListDropped)="drop($event)">
+                    <div class="example-box" *ngFor="let item of f.children; let i = index" cdkDrag> {{item?.item}}
+                        <ng-container>
+                            <span (click)="removeLastDroppedItem(f,item)">X</span>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class=" flex">
+            <div class="example-container">
+                <div class="example-list flex" cdkDropList [cdkDropListData]="Tickets"
+                    (cdkDropListDropped)="drop($event);multiSelect.dropListDropped($event)">
+                    <div class="example-box" *ngFor="let item of Tickets" (pointerdown)="multiSelect.mouseDown($event)"
+                        (pointerup)="multiSelect.mouseUp($event)"
+                        (cdkDragStarted)="multiSelect.dragStarted();multiDrag.dragStarted($event)"
+                        (cdkDragEnded)="multiSelect.dragEnded()" cdkDrag>{{item?.item}}</div>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- </div> -->
+
+    </div>
+
+</div>
