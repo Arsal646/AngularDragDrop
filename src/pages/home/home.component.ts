@@ -13,13 +13,13 @@ export class HomeComponent implements OnInit {
 	Seats: any = Seats
 	Tickets: any = Tickets
 	Test_tickets: any = Test_Ticket
-	TicketsArray:any=[]
-	BackupTicketsArray:any=[]
+	TicketsArray: any = []
+	BackupTicketsArray: any = []
 	DroppedListLength: any = []
 	dropedtickets: any
 	dropSeatRow: any
 	dropSeatIndex: any
-	AllSelected:any
+	AllSelected: any
 
 	constructor() {
 	}
@@ -27,24 +27,19 @@ export class HomeComponent implements OnInit {
 		this.getTickets()
 		this.getSeats()
 		this.DroppedListLength = this.Seats.length;
-
-
 	}
-	selectAll(e:any){
-		if(e.checked){
-			this.AllSelected=e.checked
-		}else{
-			this.AllSelected=e.checked
+	selectAll(e: any) {
+		if (e.checked) {
+			this.AllSelected = e.checked
+		} else {
+			this.AllSelected = e.checked
 		}
 	}
-	categorySelection(e:any){
-		this.TicketsArray=[]
-			console.log(e)
-
-			this.TicketsArray=[... new Set(e)]
-
+	categorySelection(e: any) {
+		this.TicketsArray = []
+		this.TicketsArray = [... new Set(e)]
 	}
-	getSeats(){
+	getSeats() {
 		this.Seats.forEach((ele: any, index: any) => {
 			if (ele.numberOfSeat) {
 				for (let i = 1; i <= ele.numberOfSeat; i++) {
@@ -62,13 +57,13 @@ export class HomeComponent implements OnInit {
 			console.log(ele)
 		})
 	}
-	getTickets(){
+	getTickets() {
 		this.Test_tickets.forEach((ele: any, index: any) => {
 			if (ele.numberOfTicket) {
 				for (let i = 1; i <= ele.numberOfTicket; i++) {
 					const ticket = {
 						id: i,
-						item: 'C' + (index+1) +'T'+ i
+						item: 'C' + (index + 1) + 'T' + i
 					}
 					ele.tickets.push(ticket)
 				}
@@ -76,16 +71,14 @@ export class HomeComponent implements OnInit {
 
 		})
 		console.log(this.Test_tickets)
-		let Tick:any=[]
-		this.Test_tickets.forEach((ele:any)=>{
-			ele.tickets.forEach((ticket:any)=>{
+		let Tick: any = []
+		this.Test_tickets.forEach((ele: any) => {
+			ele.tickets.forEach((ticket: any) => {
 				Tick.push(ticket)
-
 			})
-
 		})
-		this.TicketsArray=[... new Set(Tick)]
-		this.BackupTicketsArray=[... new Set(Tick)]
+		this.TicketsArray = [... new Set(Tick)]
+		this.BackupTicketsArray = [... new Set(Tick)]
 		console.log(this.TicketsArray)
 	}
 	drop(event: CdkDragDrop<string[]>) {
@@ -115,9 +108,7 @@ export class HomeComponent implements OnInit {
 				}
 			})
 		})
-
 		this.singleItemIndropZone(event.container.data, this.dropSeatRow, this.dropSeatIndex)
-
 	}
 	singleItemIndropZone(seats: any, i: any, dropSeatIndex: any) {
 		let extraSeats: any = []
@@ -137,8 +128,9 @@ export class HomeComponent implements OnInit {
 						extraSeats.forEach((ele: any, i: any) => {
 							this.Seats.forEach((seats: any) => {
 								seats.seat.forEach((seat: any) => {
-									console.log(mainIndex)
+								//	console.log(mainIndex)
 									if (mainIndex === this.Seats[dropSeatRow].seat.length) {
+									//	console.log(ele)
 										this.removeLastDroppedItem('', ele)
 									}
 									if (mainIndex != this.Seats[dropSeatRow].seat.length) {
@@ -153,14 +145,9 @@ export class HomeComponent implements OnInit {
 							}
 						})
 					}
-
-
 				}
 			})
 		})
-
-
-
 	}
 	removeLastDroppedItem(main: any, item: any) {
 		//	console.log(this.Seats)
@@ -174,25 +161,21 @@ export class HomeComponent implements OnInit {
 					})
 					//	console.log(seat)
 					//this.Seats.push(seat)
-					this.Tickets.push(item)
+					this.TicketsArray.push(item)
 					this.Seats = [...new Set(this.Seats)]
-					this.Tickets = [...new Set(this.Tickets)]
+					this.TicketsArray = [...new Set(this.TicketsArray)]
 					//	console.log(this.Seats)
 				}
 			})
 
 		});
 	}
-
-
 	True() {
 		return true
 	}
 	False() {
 		return false
 	}
-
-
 	/* TWO OBJECTS */
 
 	// Multi Select
