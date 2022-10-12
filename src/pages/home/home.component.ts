@@ -14,10 +14,12 @@ export class HomeComponent implements OnInit {
 	Tickets: any = Tickets
 	Test_tickets: any = Test_Ticket
 	TicketsArray:any=[]
+	BackupTicketsArray:any=[]
 	DroppedListLength: any = []
 	dropedtickets: any
 	dropSeatRow: any
 	dropSeatIndex: any
+	AllSelected:any
 
 	constructor() {
 	}
@@ -28,14 +30,18 @@ export class HomeComponent implements OnInit {
 
 
 	}
+	selectAll(e:any){
+		if(e.checked){
+			this.AllSelected=e.checked
+		}else{
+			this.AllSelected=e.checked
+		}
+	}
 	categorySelection(e:any){
-		console.log(e)
-		// this.TicketsArray.map((ele:any)=>{
-		// 	ele.tickets.filter((ticket:any)=>{
-		// 		return e
+		this.TicketsArray=[]
+			console.log(e)
 
-		// 	})
-		// })
+			this.TicketsArray=[... new Set(e)]
 
 	}
 	getSeats(){
@@ -79,6 +85,7 @@ export class HomeComponent implements OnInit {
 
 		})
 		this.TicketsArray=[... new Set(Tick)]
+		this.BackupTicketsArray=[... new Set(Tick)]
 		console.log(this.TicketsArray)
 	}
 	drop(event: CdkDragDrop<string[]>) {

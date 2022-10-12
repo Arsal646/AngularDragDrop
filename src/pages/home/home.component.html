@@ -25,17 +25,24 @@
     </div>
     <div class="col col2">
           <mat-form-field appearance="outline">
-            <mat-select >
-              <mat-option *ngFor="let food of Test_tickets" (onSelectionChange)="categorySelection(food.tickets)" [value]="food.tickets" >
+            <mat-select placeholder="All" (selectionChange)="categorySelection($event.value)" >
+                <mat-option [value]="BackupTicketsArray">All</mat-option>
+              <mat-option *ngFor="let food of Test_tickets"  [value]="food.tickets" >
                 {{food.name}}
               </mat-option>
             </mat-select>
           </mat-form-field>
+
+
+          <mat-checkbox (change)="selectAll($event)" class="example-margin margin">Select All</mat-checkbox>
+
+
+
         <div class=" flex">
             <div class="example-container">
-                <div class="example-list flex" cdkDropList [cdkDropListData]="Tickets"
+                <div class="example-list flex" cdkDropList [cdkDropListData]="TicketsArray"
                     (cdkDropListDropped)="drop($event);multiSelect.dropListDropped($event)">
-                    <div class="example-box" *ngFor="let item of TicketsArray" (pointerdown)="multiSelect.mouseDown($event)"
+                    <div class="example-box ticket" [ngClass]="AllSelected ? 'selected':''" *ngFor="let item of TicketsArray" (pointerdown)="multiSelect.mouseDown($event)"
                         (pointerup)="multiSelect.mouseUp($event)"
                         (cdkDragStarted)="multiSelect.dragStarted();multiDrag.dragStarted($event)"
                         (cdkDragEnded)="multiSelect.dragEnded()" cdkDrag>{{item?.item}}</div>

@@ -8,6 +8,7 @@ import { HomeComponent } from 'src/pages/home/home.component';
 import {MatSelectModule} from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule, MatInputModule } from '@angular/material';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +21,8 @@ import { MatFormFieldModule, MatInputModule } from '@angular/material';
     MatSelectModule,
     BrowserAnimationsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatCheckboxModule
 
   ],
   providers: [],
