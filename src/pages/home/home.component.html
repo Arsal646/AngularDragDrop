@@ -26,7 +26,7 @@
     <div class="col col2">
           <mat-form-field appearance="outline">
             <mat-select placeholder="All" (selectionChange)="categorySelection($event.value)" >
-                <mat-option [value]="BackupTicketsArray">All</mat-option>
+                <mat-option [value]="Test_tickets">All</mat-option>
               <mat-option *ngFor="let food of Test_tickets"  [value]="food.tickets" >
                 {{food.name}}
               </mat-option>

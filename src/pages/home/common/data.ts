@@ -2,7 +2,7 @@
  export const Seats = [
       {
           name:"Row1",
-          numberOfSeat:4,
+          numberOfSeat:2,
           seat:[
           ]
       },
