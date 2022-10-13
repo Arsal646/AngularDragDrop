@@ -25,9 +25,9 @@
     </div>
     <div class="col col2">
           <mat-form-field appearance="outline">
-            <mat-select placeholder="All" (selectionChange)="categorySelection($event.value)" >
-                <mat-option [value]="Test_tickets">All</mat-option>
-              <mat-option *ngFor="let food of Test_tickets"  [value]="food.tickets" >
+            <mat-select [placeholder]="SelectPlaceHolder" (selectionChange)="categorySelection($event.value)" >
+                <!-- <mat-option [value]="Test_tickets">All</mat-option> -->
+              <mat-option *ngFor="let food of Test_tickets;let i=index"  [value]="i" >
                 {{food.name}}
               </mat-option>
             </mat-select>
@@ -40,9 +40,9 @@
 
         <div class=" flex">
             <div class="example-container">
-                <div class="example-list flex ticket-flex" cdkDropList [cdkDropListData]="TicketsArray"
+                <div class="example-list flex ticket-flex" cdkDropList [cdkDropListData]="Test_tickets[Categoryindex].tickets"
                     (cdkDropListDropped)="drop($event);multiSelect.dropListDropped($event)">
-                    <div class="example-box ticket" [ngClass]="AllSelected ? 'selected':''" *ngFor="let item of TicketsArray" (pointerdown)="multiSelect.mouseDown($event)"
+                    <div class="example-box ticket" [ngClass]="AllSelected ? 'selected':''" *ngFor="let item of Test_tickets[Categoryindex].tickets" (pointerdown)="multiSelect.mouseDown($event)"
                         (pointerup)="multiSelect.mouseUp($event)"
                         (cdkDragStarted)="multiSelect.dragStarted();multiDrag.dragStarted($event)"
                         (cdkDragEnded)="multiSelect.dragEnded()" cdkDrag>{{item?.item}}</div>

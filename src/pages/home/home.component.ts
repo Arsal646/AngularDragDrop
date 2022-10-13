@@ -20,6 +20,8 @@ export class HomeComponent implements OnInit {
 	dropSeatRow: any
 	dropSeatIndex: any
 	AllSelected: any
+	Categoryindex=0
+	SelectPlaceHolder:any
 
 	constructor() {
 	}
@@ -27,6 +29,7 @@ export class HomeComponent implements OnInit {
 		this.getTickets()
 		this.getSeats()
 		this.DroppedListLength = this.Seats.length;
+		this.SelectPlaceHolder=this.Test_tickets[this.Categoryindex].name
 	}
 	selectAll(e: any) {
 		if (e.checked) {
@@ -37,21 +40,23 @@ export class HomeComponent implements OnInit {
 	}
 	categorySelection(e: any) {
 		console.log(e)
-		let tick:any=[]
-		if(e.length){
-			if(e[0]?.tickets){
+		this.Categoryindex=e
+		this.SelectPlaceHolder=this.Test_tickets[this.Categoryindex].name
+		// let tick:any=[]
+		// if(e.length){
+		// 	if(e[0]?.tickets){
 			
-				e.forEach((ele:any)=>{
-					ele.tickets.forEach((ticket:any)=>{
-						tick.push(ticket)
-					})
-				})
-			}
+		// 		e.forEach((ele:any)=>{
+		// 			ele.tickets.forEach((ticket:any)=>{
+		// 				tick.push(ticket)
+		// 			})
+		// 		})
+		// 	}
 
-		}
+		// }
 	
-		this.TicketsArray = []
-		this.TicketsArray =e[0]?.tickets ? [... new Set(tick)] : [... new Set(e)]
+		// this.TicketsArray = []
+		// this.TicketsArray =e[0]?.tickets ? [... new Set(tick)] : [... new Set(e)]
 	}
 	getSeats() {
 		this.Seats.forEach((ele: any, index: any) => {
@@ -86,15 +91,15 @@ export class HomeComponent implements OnInit {
 
 		})
 		console.log(this.Test_tickets)
-		let Tick: any = []
-		this.Test_tickets.forEach((ele: any) => {
-			ele.tickets.forEach((ticket: any) => {
-				Tick.push(ticket)
-			})
-		})
-		this.TicketsArray = [... new Set(Tick)]
-		this.BackupTicketsArray = [... new Set(Tick)]
-		console.log(this.TicketsArray)
+	//	let Tick: any = []
+		// this.Test_tickets.forEach((ele: any) => {
+		// 	ele.tickets.forEach((ticket: any) => {
+		// 		Tick.push(ticket)
+		// 	})
+		// })
+		// this.TicketsArray = [... new Set(Tick)]
+		// this.BackupTicketsArray = [... new Set(Tick)]
+		// console.log(this.TicketsArray)
 	}
 	drop(event: CdkDragDrop<string[]>) {
 		// If current element has ".selected"
@@ -126,22 +131,20 @@ export class HomeComponent implements OnInit {
 		this.singleItemIndropZone(event.container.data, this.dropSeatRow, this.dropSeatIndex)
 
 
-		this.Test_tickets.forEach((ticket: any) => {
-			this.dropedtickets.forEach((drop: any) => {
-				if (ticket.tickets.includes(drop)) {
-					//console.log(drop)
-					//ticket.tickets.splice(drop, 1)
-					var index = ticket.tickets.indexOf(drop);
-					//console.log(index)
-					if (index !== -1) {
-						ticket.tickets.splice(index, 1);
-					}
-				}
+		// this.Test_tickets.forEach((ticket: any) => {
+		// 	this.dropedtickets.forEach((drop: any) => {
+		// 		if (ticket.tickets.includes(drop)) {
+		// 			//console.log(drop)
+		// 			//ticket.tickets.splice(drop, 1)
+		// 			var index = ticket.tickets.indexOf(drop);
+		// 			//console.log(index)
+		// 			if (index !== -1) {
+		// 				ticket.tickets.splice(index, 1);
+		// 			}
+		// 		}
 
-			})
-
-			//this.BackupTicketsArray=[... new Set(ticket.tickets)]
-		})
+		// 	})
+		// })
 
 		console.log(this.Test_tickets)
 
@@ -187,6 +190,15 @@ export class HomeComponent implements OnInit {
 		})
 	}
 	removeLastDroppedItem(main: any, item: any) {
+
+		this.Test_tickets.forEach((ele:any,index:any)=>{
+			if(ele.name==item.category){
+				console.log(index)
+				this.Categoryindex=index
+				this.categorySelection(index)
+			}
+		})
+		this.SelectPlaceHolder=this.Test_tickets[this.Categoryindex].name
 		//	console.log(this.Seats)
 			console.log( 'removed',item)
 		this.Seats.forEach((element: any) => {
@@ -208,24 +220,27 @@ export class HomeComponent implements OnInit {
 			//console.log('addToTickt',item)
 
 
-			if(!this.TicketsArray.includes(item)){
-				this.TicketsArray.push(item)
+			if(!this.Test_tickets[this.Categoryindex].tickets.includes(item)){
+				this.Test_tickets[this.Categoryindex].tickets.push(item)
 			}
 
-			this.Test_tickets.forEach((ele:any)=>{
-					if(ele.name===item.category){
-						console.log(item,ele.tickets)
+			// this.Test_tickets.forEach((ele:any)=>{
+			// 		if(ele.name===item.category){
+			// 			console.log(item,ele.tickets)
 						
-						if(!ele.tickets.includes(item)){
-							console.log('addToTickt',item)
-							ele.tickets=[... new Set(this.TicketsArray)]
-						//	ele.tickets=[... new Set(ele.tickets)]
-						}
-					}
-			})
+			// 			if(!ele.tickets.includes(item)){
+			// 				console.log('addToTickt',item)
+			// 				ele.tickets=[... new Set(this.TicketsArray)]
+			// 			}
+			// 		}
+			// })
 
-			this.Test_tickets= [... new Set(this.Test_tickets)]
-			console.log(this.Test_tickets)
+			// this.Test_tickets= [... new Set(this.Test_tickets)]
+			 console.log(this.Test_tickets)
+
+
+			
+			
 			
 		
 
