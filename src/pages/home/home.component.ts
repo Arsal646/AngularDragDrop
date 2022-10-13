@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit {
 		}
 	}
 	categorySelection(e: any) {
+		console.log(e)
 		this.TicketsArray = []
 		this.TicketsArray = [... new Set(e)]
 	}
@@ -109,6 +110,19 @@ export class HomeComponent implements OnInit {
 			})
 		})
 		this.singleItemIndropZone(event.container.data, this.dropSeatRow, this.dropSeatIndex)
+
+
+		this.Test_tickets.forEach((ticket:any)=>{
+			this.dropedtickets.forEach((drop:any)=>{
+				if(ticket.tickets.includes(drop)){
+					ticket.tickets.splice(drop,1)
+				}
+
+			})
+			//this.BackupTicketsArray=[... new Set(ticket.tickets)]
+	})
+
+
 	}
 	singleItemIndropZone(seats: any, i: any, dropSeatIndex: any) {
 		let extraSeats: any = []

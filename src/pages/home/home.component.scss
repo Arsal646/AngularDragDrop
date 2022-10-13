@@ -29,6 +29,7 @@
     cursor: move;
     background: white;
     font-size: 14px;
+    border: 1px solid #ccc;
   }
 
   .cdk-drag-preview {
@@ -49,6 +50,7 @@
 
   .example-box:last-child {
     border: none;
+    border: 1px solid #ccc;
   }
 
   .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
@@ -98,4 +100,16 @@
   }
   .margin{
     margin: 10px 0;
+  }
+
+  .ticket-flex{
+    display: flex;
+    flex-wrap: wrap;
+    gap:5px;
+    border: 1px solid rgb(204, 196, 196) !important;
+    padding: 5px;
+  }
+
+  .select-all{
+    margin: 10px;
   }

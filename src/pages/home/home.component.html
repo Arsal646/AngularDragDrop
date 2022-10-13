@@ -34,13 +34,13 @@
           </mat-form-field>
 
 
-          <mat-checkbox (change)="selectAll($event)" class="example-margin margin">Select All</mat-checkbox>
+          <mat-checkbox (change)="selectAll($event)" class="example-margin margin select-all">Select All</mat-checkbox>
 
 
 
         <div class=" flex">
             <div class="example-container">
-                <div class="example-list flex" cdkDropList [cdkDropListData]="TicketsArray"
+                <div class="example-list flex ticket-flex" cdkDropList [cdkDropListData]="TicketsArray"
                     (cdkDropListDropped)="drop($event);multiSelect.dropListDropped($event)">
                     <div class="example-box ticket" [ngClass]="AllSelected ? 'selected':''" *ngFor="let item of TicketsArray" (pointerdown)="multiSelect.mouseDown($event)"
                         (pointerup)="multiSelect.mouseUp($event)"
