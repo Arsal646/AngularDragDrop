@@ -1,5 +1,12 @@
+
+
+
+
 <div class="heading">
-    <h1>Ticket Management System</h1>
+    <h1>Ticket Management System
+
+        <!-- <mat-icon aria-hidden="false" aria-label="Example home icon">home</mat-icon> -->
+    </h1>
 </div>
 <div cdkDropListGroup style="display: flex;">
     <div class="col col1">
@@ -10,12 +17,12 @@
             <div class="example-container seats">
                 <div *ngFor="let f of row.seat" class="seats">
                     <p>{{f?.item}}</p>
-                    <div class="example-list" ngClass="example-list" *ngIf="f.children"
-                        [cdkDropListEnterPredicate]="f.children.length ? False:True" cdkDropList
-                        [cdkDropListData]="f.children" (cdkDropListDropped)="drop($event)">
-                        <div class="example-box" *ngFor="let item of f.children; let i = index" cdkDrag> {{item?.item}}
+                    <div class="example-list" ngClass="example-list" *ngIf="f.ticket"
+                        [cdkDropListEnterPredicate]="f.ticket.length ? False:True" cdkDropList
+                        [cdkDropListData]="f.ticket" (cdkDropListDropped)="drop($event)">
+                        <div class="example-box" *ngFor="let item of f.ticket; let i = index" cdkDrag> {{item?.item}}
                             <ng-container>
-                                <span (click)="removeLastDroppedItem(f,item)">X</span>
+                                <span class="delete" (click)="removeLastDroppedItem(f,item)">X</span>
                             </ng-container>
                         </div>
                     </div>
@@ -25,19 +32,14 @@
     </div>
     <div class="col col2">
           <mat-form-field appearance="outline">
-            <mat-select [placeholder]="SelectPlaceHolder" (selectionChange)="categorySelection($event.value)" >
+            <mat-select [placeholder]="SelectPlaceHolder"   (selectionChange)="categorySelection($event.value)" >
                 <!-- <mat-option [value]="Test_tickets">All</mat-option> -->
               <mat-option *ngFor="let food of Test_tickets;let i=index"  [value]="i" >
                 {{food.name}}
               </mat-option>
             </mat-select>
           </mat-form-field>
-
-
           <mat-checkbox (change)="selectAll($event)" class="example-margin margin select-all">Select All</mat-checkbox>
-
-
-
         <div class=" flex">
             <div class="example-container">
                 <div class="example-list flex ticket-flex" cdkDropList [cdkDropListData]="Test_tickets[Categoryindex].tickets"
@@ -47,12 +49,8 @@
                         (cdkDragStarted)="multiSelect.dragStarted();multiDrag.dragStarted($event)"
                         (cdkDragEnded)="multiSelect.dragEnded()" cdkDrag>{{item?.item}}</div>
                 </div>
-
             </div>
-
         </div>
         <!-- </div> -->
-
     </div>
-
 </div>

@@ -2,7 +2,7 @@
  export const Seats = [
       {
           name:"Row1",
-          numberOfSeat:2,
+          numberOfSeat:10,
           seat:[
           ]
       },
@@ -17,7 +17,7 @@
   export const Test_Ticket = [
     {
         name:"Category1",
-        numberOfTicket:4,
+        numberOfTicket:12,
         tickets:[
         ]
     },

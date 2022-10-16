@@ -42,10 +42,12 @@ export class HomeComponent implements OnInit {
 		console.log(e)
 		this.Categoryindex=e
 		this.SelectPlaceHolder=this.Test_tickets[this.Categoryindex].name
+		console.log(this.SelectPlaceHolder)
+		return e
 		// let tick:any=[]
 		// if(e.length){
 		// 	if(e[0]?.tickets){
-			
+
 		// 		e.forEach((ele:any)=>{
 		// 			ele.tickets.forEach((ticket:any)=>{
 		// 				tick.push(ticket)
@@ -54,7 +56,7 @@ export class HomeComponent implements OnInit {
 		// 	}
 
 		// }
-	
+
 		// this.TicketsArray = []
 		// this.TicketsArray =e[0]?.tickets ? [... new Set(tick)] : [... new Set(e)]
 	}
@@ -67,7 +69,7 @@ export class HomeComponent implements OnInit {
 						item: 'Seat' + i,
 						rowIndex: index,
 						seatIndex: i - 1,
-						children: [
+						ticket: [
 						]
 					}
 					ele.seat.push(seat)
@@ -120,8 +122,8 @@ export class HomeComponent implements OnInit {
 		this.dropedtickets = event.container.data
 		this.Seats.forEach((ele: any) => {
 			ele.seat.forEach((dropSeat: any) => {
-				//console.log(dropSeat.children===event.container.data)
-				if (dropSeat.children === event.container.data) {
+				//console.log(dropSeat.ticket===event.container.data)
+				if (dropSeat.ticket === event.container.data) {
 					//	console.log(dropSeat)
 					this.dropSeatRow = dropSeat.rowIndex
 					this.dropSeatIndex = dropSeat.seatIndex
@@ -157,8 +159,8 @@ export class HomeComponent implements OnInit {
 		console.log('mainInde', mainIndex)
 		this.Seats.map((seats: any) => {
 			seats.seat.map((seat: any) => {
-				if (seat.children.length > 1) {
-					seat.children = seat.children.filter((child: any, i: any) => {
+				if (seat.ticket.length > 1) {
+					seat.ticket = seat.ticket.filter((child: any, i: any) => {
 						if (i == 0) {
 							return child
 						}
@@ -174,14 +176,14 @@ export class HomeComponent implements OnInit {
 										this.removeLastDroppedItem('', ele)
 									}
 									if (mainIndex != this.Seats[dropSeatRow].seat.length) {
-										if (this.Seats[dropSeatRow].seat[mainIndex].children.length >= 1) {
+										if (this.Seats[dropSeatRow].seat[mainIndex].ticket.length >= 1) {
 											mainIndex = mainIndex + 1
 										}
 									}
 								})
 							})
 							if (mainIndex != this.Seats[dropSeatRow].seat.length) {
-								this.Seats[dropSeatRow].seat[mainIndex].children.push(ele)
+								this.Seats[dropSeatRow].seat[mainIndex].ticket.push(ele)
 							}
 						})
 					}
@@ -198,14 +200,14 @@ export class HomeComponent implements OnInit {
 				this.categorySelection(index)
 			}
 		})
-		this.SelectPlaceHolder=this.Test_tickets[this.Categoryindex].name
+		this.SelectPlaceHolder=''
 		//	console.log(this.Seats)
 			console.log( 'removed',item)
 		this.Seats.forEach((element: any) => {
 			//	console.log(element.seat)
 			element.seat.forEach((seat: any) => {
-				if (seat.children.length) {
-					seat.children = seat.children.filter((val: any) => {
+				if (seat.ticket.length) {
+					seat.ticket = seat.ticket.filter((val: any) => {
 						return val != item
 					})
 					//	console.log(seat)
@@ -227,7 +229,7 @@ export class HomeComponent implements OnInit {
 			// this.Test_tickets.forEach((ele:any)=>{
 			// 		if(ele.name===item.category){
 			// 			console.log(item,ele.tickets)
-						
+
 			// 			if(!ele.tickets.includes(item)){
 			// 				console.log('addToTickt',item)
 			// 				ele.tickets=[... new Set(this.TicketsArray)]
@@ -239,10 +241,10 @@ export class HomeComponent implements OnInit {
 			 console.log(this.Test_tickets)
 
 
-			
-			
-			
-		
+
+
+
+
 
 		});
 	}
