@@ -4,8 +4,6 @@
 
 <div class="heading">
     <h1>Ticket Management System
-
-        <!-- <mat-icon aria-hidden="false" aria-label="Example home icon">home</mat-icon> -->
     </h1>
 </div>
 <div cdkDropListGroup style="display: flex;">
@@ -14,16 +12,18 @@
             <div class="rowTitle">
                 <h4>{{row.name}}</h4><br>
             </div>
-            <div class="example-container seats">
-                <div *ngFor="let f of row.seat" class="seats">
+            <div class="example-container seats ">
+                <div *ngFor="let f of row.seat" class="seats width">
                     <p>{{f?.item}}</p>
-                    <div class="example-list" ngClass="example-list" *ngIf="f.ticket"
+                    <div class="example-list height " ngClass="example-list" *ngIf="f.ticket"
                         [cdkDropListEnterPredicate]="f.ticket.length ? False:True" cdkDropList
                         [cdkDropListData]="f.ticket" (cdkDropListDropped)="drop($event)">
-                        <div class="example-box" *ngFor="let item of f.ticket; let i = index" cdkDrag> {{item?.item}}
-                            <ng-container>
-                                <span class="delete" (click)="removeLastDroppedItem(f,item)">X</span>
-                            </ng-container>
+                        <div class="" *ngFor="let item of f.ticket; let i = index" cdkDrag>
+                            <div style="display: flex;flex-direction:column;justify-content: center;align-items: center;gap:5px ;">
+                                <span>{{item.item}}</span>
+                                <span class="delete width" (click)="removeLastDroppedItem(f,item)">   <fa-icon class="delete" [icon]="faTrash"></fa-icon></span>
+
+                            </div>
                         </div>
                     </div>
                 </div>

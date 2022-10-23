@@ -9,10 +9,14 @@ import {MatSelectModule} from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule, MatInputModule } from '@angular/material';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { SeatsManageComponent } from 'src/pages/home/seats/seats-manage/seats-manage.component';
+import {MatTableModule} from '@angular/material/table';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    SeatsManageComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +26,10 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     BrowserAnimationsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    FontAwesomeModule,
+    MatTableModule
+
 
   ],
   providers: [],

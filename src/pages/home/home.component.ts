@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CdkDragDrop, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Seats, Test_Ticket, Tickets } from './common/data';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
 	selector: 'app-home',
@@ -8,6 +9,7 @@ import { Seats, Test_Ticket, Tickets } from './common/data';
 	styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+	faTrash = faTrash;
 	todo: any = []
 	done: any = []
 	Seats: any = Seats

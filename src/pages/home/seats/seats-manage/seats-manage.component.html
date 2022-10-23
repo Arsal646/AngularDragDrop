@@ -1,0 +1,26 @@
+<div class="header">
+  <h2>Manage Seat</h2>
+</div>
+
+<table mat-table [dataSource]="Seats" class="mat-elevation-z8">
+
+  <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Row </th>
+    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="numberOfSeat">
+    <th mat-header-cell *matHeaderCellDef> Number Of Seat </th>
+    <td mat-cell *matCellDef="let element"> {{element.numberOfSeat}} </td>
+  </ng-container>
+
+
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr class="hover" mat-row *matRowDef="let row; columns: displayedColumns;" (click)="rowClick(row)"></tr>
+</table>
