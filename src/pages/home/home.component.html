@@ -1,53 +1,80 @@
-
-
-
-
 <div class="heading">
-    <h1>Ticket Management System
+    <h1>Ticket Allocation
     </h1>
 </div>
 <div cdkDropListGroup style="display: flex;">
-    <div class="col col1">
+    <div class="coll col1">
         <ng-container *ngFor="let row of Seats;let i = index">
-            <div class="rowTitle">
+            <!-- <div class="rowTitle">
                 <h4>{{row.name}}</h4><br>
-            </div>
-            <div class="example-container seats ">
-                <div *ngFor="let f of row.seat" class="seats width">
-                    <p>{{f?.item}}</p>
-                    <div class="example-list height " ngClass="example-list" *ngIf="f.ticket"
-                        [cdkDropListEnterPredicate]="f.ticket.length ? False:True" cdkDropList
-                        [cdkDropListData]="f.ticket" (cdkDropListDropped)="drop($event)">
-                        <div class="" *ngFor="let item of f.ticket; let i = index" cdkDrag>
-                            <div style="display: flex;flex-direction:column;justify-content: center;align-items: center;gap:5px ;">
-                                <span>{{item.item}}</span>
-                                <span class="delete width" (click)="removeLastDroppedItem(f,item)">   <fa-icon class="delete" [icon]="faTrash"></fa-icon></span>
+            </div> -->
+            <div>
+                <fieldset class="example-container seats no-border ">
+                    <legend>{{row.name}}</legend>
+                    <div *ngFor="let f of row.seat" class="seats seat-width ">
+                        <p class="seat-name">{{f?.item}}</p>
+                        <div class="example-list height seat-width " ngClass="example-list" *ngIf="f.ticket"
+                            [cdkDropListEnterPredicate]="f.ticket.length ? False:True" cdkDropList
+                            [cdkDropListData]="f.ticket" (cdkDropListDropped)="drop($event)">
+                            <div  class="hasTicket" *ngFor="let item of f.ticket; let i = index" cdkDrag
+                                mat-raised-button [tooltip]="$any(HtmlContent)" contentType="template" pointerEvents="auto"
+                                placement="bottom" [showDelay]=500 theme="light">
+                                <ng-template #HtmlContent>
+                                    <div class="card " style="text-align: left;">
+                                        <div class="card-header p-2 font-weight-bold">
+                                            Ticket Detail
+                                          </div>
+                                          <div class="card-body p-2">
+                                            <p><strong>Name: </strong>{{item.name}}</p>
+                                            <p><strong>Age: </strong>{{item.age}}</p>
+                                            <p><strong>Seat: </strong>{{f?.item}}</p>
+                                            <p><strong>Ticket: </strong>{{item?.item}}</p>
+                                          </div>
+                                          <div class="card-footer text-muted p-2">
+                                            <p>Double Click To Remove</p>
+                                          </div>
+                                    </div>
+                                </ng-template>
+                                <div (dblclick)="removeLastDroppedItem(f,item)" class="delete"
+                                    style="display: flex;flex-direction:column;justify-content: center;align-items: center;gap:5px ;">
+                                    <span class="ticket-in-seat">{{item.item}}</span>
+                                    <!-- <span class="delete" (dblclick)="removeLastDroppedItem(f,item)">
+                                        <fa-icon class="delete" [icon]="faTrash"></fa-icon>
+                                    </span> -->
 
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </fieldset>
             </div>
         </ng-container>
     </div>
-    <div class="col col2">
-          <mat-form-field appearance="outline">
-            <mat-select [placeholder]="SelectPlaceHolder"   (selectionChange)="categorySelection($event.value)" >
-                <!-- <mat-option [value]="Test_tickets">All</mat-option> -->
-              <mat-option *ngFor="let food of Test_tickets;let i=index"  [value]="i" >
-                {{food.name}}
-              </mat-option>
+    <div class="coll col2">
+        <mat-form-field appearance="outline">
+            <mat-select [placeholder]="SelectPlaceHolder" (selectionChange)="categorySelection($event.value)">
+                <mat-option *ngFor="let ticket of Test_tickets;let i=index" [value]="i">
+                    {{ticket.name}}
+                </mat-option>
             </mat-select>
-          </mat-form-field>
-          <mat-checkbox (change)="selectAll($event)" class="example-margin margin select-all">Select All</mat-checkbox>
+        </mat-form-field>
+        <mat-checkbox (change)="selectAll($event)" class="example-margin margin select-all">Select All</mat-checkbox>
         <div class=" flex">
             <div class="example-container">
-                <div class="example-list flex ticket-flex" cdkDropList [cdkDropListData]="Test_tickets[Categoryindex].tickets"
+                <div class="example-list flex ticket-flex" cdkDropList
+                    [cdkDropListData]="Test_tickets[Categoryindex].tickets"
                     (cdkDropListDropped)="drop($event);multiSelect.dropListDropped($event)">
-                    <div class="example-box ticket" [ngClass]="AllSelected ? 'selected':''" *ngFor="let item of Test_tickets[Categoryindex].tickets" (pointerdown)="multiSelect.mouseDown($event)"
-                        (pointerup)="multiSelect.mouseUp($event)"
+                    <div class="example-box ticket" [ngClass]="AllSelected ? 'selected':''"
+                        *ngFor="let item of Test_tickets[Categoryindex].tickets"
+                        (pointerdown)="multiSelect.mouseDown($event)" (pointerup)="multiSelect.mouseUp($event)"
                         (cdkDragStarted)="multiSelect.dragStarted();multiDrag.dragStarted($event)"
-                        (cdkDragEnded)="multiSelect.dragEnded()" cdkDrag>{{item?.item}}</div>
+                        (cdkDragEnded)="multiSelect.dragEnded()" cdkDrag>
+                        <div>
+                            <p>{{item?.name}}</p>
+                            <p>{{item?.item}}</p>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

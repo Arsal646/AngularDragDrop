@@ -1,23 +1,24 @@
 
  export const Seats = [
       {
-          name:"Row1",
-          numberOfSeat:40,
+          name:"R1",
+          numberOfSeat:50,
           seat:[
           ]
       },
       {
-          name:"Row4",
-          numberOfSeat:4,
+          name:"R2",
+          numberOfSeat:50,
           seat:[
           ]
-      }
+      },
+
   ]
 
   export const Test_Ticket = [
     {
         name:"movie",
-        numberOfTicket:12,
+        numberOfTicket:50,
         tickets:[
         ]
     },

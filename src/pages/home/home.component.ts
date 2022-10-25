@@ -24,7 +24,6 @@ export class HomeComponent implements OnInit {
 	AllSelected: any
 	Categoryindex=0
 	SelectPlaceHolder:any
-
 	constructor() {
 	}
 	ngOnInit(): void {
@@ -40,6 +39,7 @@ export class HomeComponent implements OnInit {
 			this.AllSelected = e.checked
 		}
 	}
+
 	categorySelection(e: any) {
 		console.log(e)
 		this.Categoryindex=e
@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit {
 				for (let i = 1; i <= ele.numberOfSeat; i++) {
 					const seat = {
 						id: i,
-						item: 'Seat' + i,
+						item: 'S' + i,
 						rowIndex: index,
 						seatIndex: i - 1,
 						ticket: [
@@ -85,7 +85,10 @@ export class HomeComponent implements OnInit {
 			if (ele.numberOfTicket) {
 				for (let i = 1; i <= ele.numberOfTicket; i++) {
 					const ticket = {
+						name:'Name '+i,
 						id: i,
+						age:30,
+						title:'Mr/Ms',
 						item: 'C' + (index + 1) + 'T' + i,
 						category:ele.name
 					}
@@ -197,14 +200,14 @@ export class HomeComponent implements OnInit {
 
 		this.Test_tickets.forEach((ele:any,index:any)=>{
 			if(ele.name==item.category){
-				console.log(index)
+			//	console.log(index)
 				this.Categoryindex=index
 				this.categorySelection(index)
 			}
 		})
 		this.SelectPlaceHolder=''
 		//	console.log(this.Seats)
-			console.log( 'removed',item)
+			//console.log( 'removed',item)
 		this.Seats.forEach((element: any) => {
 			//	console.log(element.seat)
 			element.seat.forEach((seat: any) => {
@@ -240,7 +243,7 @@ export class HomeComponent implements OnInit {
 			// })
 
 			// this.Test_tickets= [... new Set(this.Test_tickets)]
-			 console.log(this.Test_tickets)
+			// console.log(this.Test_tickets)
 
 
 

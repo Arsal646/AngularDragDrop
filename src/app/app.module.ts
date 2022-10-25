@@ -12,6 +12,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SeatsManageComponent } from 'src/pages/home/seats/seats-manage/seats-manage.component';
 import {MatTableModule} from '@angular/material/table';
+import { TooltipModule } from 'ng2-tooltip-directive';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,9 +30,9 @@ import {MatTableModule} from '@angular/material/table';
     MatInputModule,
     MatCheckboxModule,
     FontAwesomeModule,
-    MatTableModule
-
-
+    MatTableModule,
+    TooltipModule,
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]
