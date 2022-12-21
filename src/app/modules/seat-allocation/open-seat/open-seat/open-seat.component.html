@@ -1,0 +1,156 @@
+<div class="d-flex p-3 mt-5 mb-4">
+    <div class="col md-col10 font-medium">
+        <h4><i role="button" (click)="back()" class="bi bi-arrow-left-circle-fill ml-2 mr-2"></i> Seat Allocation</h4>
+    </div>
+    <div class="">
+        <button (click)="manageBlock(Seats)" type="button" class="btn btn-outline-dark p-2">Manage Block</button>
+    </div>
+</div>
+<div cdkDropListGroup style="display: flex;position: relative;">
+    <div style="width: 100%; height: auto ">
+        <as-split direction="horizontal">
+            <as-split-area>
+                <as-split direction="horizontal">
+                    <as-split-area [size]="85" class="p-3" style="background:#fbfbfb">
+                        <div style="position: fixed;z-index: 1;width: 80vw;">
+                            <div class="d-flex justify-content-between mb-4">
+                                <div class="d-flex gap-2">
+                                    <div *ngFor="let item of flexi_dataSource">
+                                        <span [ngStyle]="setBackgroundColor(item)" style="min-width: 10px; min-height: 990px; color: transparent;font-size: 8px;">sss</span>
+                                        <span class="p-1" style="font-size: 8px" >{{item?.name}}</span>
+                                    </div>
+                                </div>
+                               <div>
+                                <button *ngIf="seatEditMode && checkedSeatList.length" (click)="saveSeat()"
+                                class="btn btn-primary p-2 m-2">Save</button>
+                            <!-- <button  class="btn btn-primary p-2 m-2">Edit</button> -->
+                            <span *ngIf="!seatEditMode" (click)="seatEdit()" role="button"><i
+                                    class="bi bi-pencil-square"></i></span>
+                            <button *ngIf="seatEditMode" (click)="cancelEdit()"
+                                class="btn btn-danger p-2 m-2">Cancel</button>
+                               </div>
+                            </div>
+                            <ng-container *ngIf="seatEditMode">
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    <mat-form-field style="width: 200px">
+                                        <mat-label>
+                                            <span>Block</span>
+                                        </mat-label>
+                                        <mat-select (selectionChange)="blockSelection($event.value)">
+                                            <mat-option *ngFor="let item of flexi_dataSource"
+                                                [value]="item ? item:selectedBlock">
+                                                {{item?.name}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div role="button" (click)="addFlexiBlock()">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <div class="d-flex col-container" [ngClass]="seatEditMode ? 'col-container-editor-mode':''">
+                                <ng-container *ngFor="let row_name of Seats[0].seat;let i = index">
+                                    <span class="col_name">{{i+1}}</span>
+                                </ng-container>
+                            </div>
+                            <ng-container *ngFor="let row of Seats;let i = index">
+                                <div>
+                                    <div class="example-container seats no-border ">
+                                        <div class="select-all-checkox" *ngIf="seatEditMode">
+                                            <!-- <mat-checkbox (change)="seatCheckAll($event,row)" class="checkbox">
+                                                <p style="font-size:8px ;">Select
+                                                    All</p>
+                                            </mat-checkbox> -->
+                                            <input role="button" class="seat-checkbox" type="checkbox"
+                                                (change)="seatCheckAll($event,row)" class="checkbox">
+                                            <p style="font-size:8px;margin: 0 4px;">Select
+                                                All</p>
+                                        </div>
+                                        <div class="row_name" [ngClass]="seatEditMode ? 'row_name_editor_mode':''">
+                                            {{row.name}}</div>
+                                        <div *ngFor="let f of row.seat" class="seats seat-width ">
+                                            <ng-container *ngIf="seatEditMode">
+                                                <!-- <mat-checkbox (change)="seatCheck($event,i,f)"  [checked]="isChecked(f.hasBackground)"
+                                                    class="checkbox"></mat-checkbox> -->
+                                                <input role="button" class="seat-checkbox" type="checkbox"
+                                                    (change)="seatCheck($event,i,f)"
+                                                    [checked]="isChecked(f.hasBackground)">
+                                            </ng-container>
+                                            <div class="single-seat-container"
+                                                [ngStyle]="f.hasBackground ? setBackgroundColor(f):{'background-color': 'white'}"
+                                                *ngIf="f.ticket">
+                                                <div class="example-list height seat-width "
+                                                    [cdkDropListEnterPredicate]="f.ticket.length ? False:True"
+                                                    cdkDropList [cdkDropListData]="f.ticket"
+                                                    (cdkDropListDropped)="drop($event)">
+                                                    <div class="hasTicket" *ngFor="let item of f.ticket; let i = index"
+                                                        cdkDrag mat-raised-button [tooltip]="$any(HtmlContent)"
+                                                        contentType="template" pointerEvents="auto" placement="bottom"
+                                                        [showDelay]=500 theme="light">
+                                                        <ng-template #HtmlContent>
+                                                            <div class="card " style="text-align: left;">
+                                                                <div class="card-header p-2 font-weight-bold">
+                                                                    Ticket Detail
+                                                                </div>
+                                                                <div class="card-body p-2">
+                                                                    <p><strong>Name: </strong>{{item.name}}</p>
+                                                                    <p><strong>Age: </strong>{{item.age}}</p>
+                                                                    <p><strong>Seat: </strong>{{f?.item}}</p>
+                                                                    <p><strong>Ticket: </strong>{{item?.item}}</p>
+                                                                </div>
+                                                                <div class="card-footer text-muted p-2">
+                                                                    <p>Double Click To Remove</p>
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                        <div (dblclick)="removeLastDroppedItem(f,item)" class="delete"
+                                                            style="display: flex;flex-direction:column;justify-content: center;align-items: center;gap:5px ;">
+                                                            <span class="ticket-in-seat">{{item.item}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </as-split-area>
+                    <as-split-area [size]="15" class="p-3" style="background:#fbfbfb;z-index: 22;">
+                        <div style="z-index: 2;">
+                            <mat-form-field appearance="outline">
+                                <mat-select [placeholder]="SelectPlaceHolder"
+                                    (selectionChange)="categorySelection($event.value)">
+                                    <mat-option *ngFor="let ticket of Test_tickets;let i=index" [value]="i">
+                                        {{ticket.name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-checkbox (change)="selectAll($event)" class="example-margin margin select-all">Select
+                                All</mat-checkbox>
+                            <div class=" flex">
+                                <div class="example-container" style="margin: 0;">
+                                    <div class="example-list flex ticket-flex" cdkDropList
+                                        [cdkDropListData]="Test_tickets[Categoryindex].tickets"
+                                        (cdkDropListDropped)="drop($event);multiSelect.dropListDropped($event)">
+                                        <div class="example-box ticket" [ngClass]="AllSelected ? 'selected':''"
+                                            *ngFor="let item of Test_tickets[Categoryindex].tickets"
+                                            (pointerdown)="multiSelect.mouseDown($event)"
+                                            (pointerup)="multiSelect.mouseUp($event)"
+                                            (cdkDragStarted)="multiSelect.dragStarted();multiDrag.dragStarted($event)"
+                                            (cdkDragEnded)="multiSelect.dragEnded()" cdkDrag>
+                                            <div>
+                                                <p>{{item?.name}}</p>
+                                                <p>{{item?.item}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </as-split-area>
+                </as-split>
+            </as-split-area>
+        </as-split>
+    </div>
+</div>

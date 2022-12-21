@@ -1,17 +1,34 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CdkDragDrop, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Seats, Test_Ticket, Tickets } from './common/data';
-import { UtilitiesService } from './common/utilities.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Seats, Test_Ticket, Tickets } from 'src/pages/home/common/open-seat-data';
+import { Location } from "@angular/common";
+import { reduce, timeInterval, timeout } from 'rxjs';
+import { UtilitiesService } from 'src/pages/home/common/utilities.service';
+import { Router } from '@angular/router';
+import { CreateFlexiBlockComponent } from 'src/app/modules/manage-block/flexi-block/create-flexi-block/create-flexi-block.component';
 import { MatDialog } from '@angular/material';
-import { BlockComponent } from './block/block/block.component';
-import { auto } from '@popperjs/core';
 @Component({
-	selector: 'app-home',
-	templateUrl: './home.component.html',
-	styleUrls: ['./home.component.scss']
+	selector: 'app-open-seat',
+	templateUrl: './open-seat.component.html',
+	styleUrls: ['./open-seat.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class OpenSeatComponent implements OnInit {
+	flexi_dataSource=[]
+	blocks =
+		[
+			{
+				name: 'block1',
+				backgroundColor: 'blue'
+			},
+			{
+				name: 'block2',
+				backgroundColor: 'yellow'
+			},
+			{
+				name: 'block3',
+				backgroundColor: 'orange'
+			}
+		]
 	todo: any = []
 	done: any = []
 	Seats: any = Seats
@@ -25,19 +42,36 @@ export class HomeComponent implements OnInit {
 	dropSeatIndex: any
 	AllSelected: any
 	Categoryindex = 0
-	isExpand:boolean=false
-	SeatExpand:boolean=false
 	SelectPlaceHolder: any
+	checkedSeatList: any = []
+	seatEditMode: boolean = false
+	selectedBlock: any
 	constructor(
-		public utilitiesService: UtilitiesService,
+		private location: Location,
+		private utilitiesService:UtilitiesService,
+		private router:Router,
 		private dialog:MatDialog
-	) {
+		) {
 	}
 	ngOnInit(): void {
 		this.getTickets()
 		this.getSeats()
 		this.DroppedListLength = this.Seats.length;
 		this.SelectPlaceHolder = this.Test_tickets[this.Categoryindex].name
+		this.getflexiBlock()
+
+	}
+	getflexiBlock(){
+		const flexiBlock=JSON.parse(localStorage.getItem('flexiBlock'))
+		if(flexiBlock?.length){
+		  this.flexi_dataSource=[...flexiBlock]
+		}
+		else{
+		  this.flexi_dataSource=[...this.blocks]
+		}
+	  }
+	back() {
+		this.location.back()
 	}
 	selectAll(e: any) {
 		if (e.checked) {
@@ -46,7 +80,6 @@ export class HomeComponent implements OnInit {
 			this.AllSelected = e.checked
 		}
 	}
-
 	categorySelection(e: any) {
 		console.log(e)
 		this.Categoryindex = e
@@ -56,14 +89,18 @@ export class HomeComponent implements OnInit {
 	}
 	getSeats() {
 		this.Seats.forEach((ele: any, index: any) => {
-			if (ele.numberOfBlock) {
-				for (let i = 1; i <= ele.numberOfBlock; i++) {
-					const block: any = {
-						name: 'block ' + i,
-						block_seats: [],
-						block_seat_limit: 10
+			ele.seat = []
+			if (ele.numberOfSeat) {
+				for (let i = 1; i <= ele.numberOfSeat; i++) {
+					const seat = {
+						id: i,
+						item: 'S' + i,
+						rowIndex: index,
+						seatIndex: i - 1,
+						ticket: [
+						]
 					}
-					ele.block.push(block)
+					ele.seat.push(seat)
 				}
 			}
 			console.log(ele)
@@ -84,7 +121,6 @@ export class HomeComponent implements OnInit {
 					ele.tickets.push(ticket)
 				}
 			}
-
 		})
 		console.log(this.Test_tickets)
 	}
@@ -103,21 +139,77 @@ export class HomeComponent implements OnInit {
 					event.previousIndex,
 					event.currentIndex);
 			}
-		//	console.log('DropData', event.container.data)
-
 		}
+		this.dropedtickets = event.container.data
+		this.Seats.forEach((ele: any) => {
+			ele.seat.forEach((dropSeat: any) => {
+				if (dropSeat.ticket === event.container.data) {
+					this.dropSeatRow = dropSeat.rowIndex
+					this.dropSeatIndex = dropSeat.seatIndex
+				}
+			})
+		})
+		this.singleItemIndropZone(event.container.data, this.dropSeatRow, this.dropSeatIndex)
+		console.log(this.Test_tickets)
 	}
-
-	removeLastDroppedItem(block:any,ticket:any){
-		console.log(block,ticket)
-		this.Test_tickets.forEach((ele:any)=>{
-			if(ele.name===ticket.category){
-				ele.tickets.push(ticket)
+	singleItemIndropZone(seats: any, i: any, dropSeatIndex: any) {
+		let extraSeats: any = []
+		let mainIndex = dropSeatIndex
+		let dropSeatRow: any = i
+		console.log('mainIndex', mainIndex)
+		this.Seats.map((seats: any) => {
+			seats.seat.map((seat: any) => {
+				if (seat.ticket.length > 1) {
+					seat.ticket = seat.ticket.filter((child: any, i: any) => {
+						if (i == 0) {
+							return child
+						}
+						extraSeats.push(child)
+					})
+					if (extraSeats.length) {
+						extraSeats.forEach((ele: any, i: any) => {
+							this.Seats.forEach((seats: any) => {
+								seats.seat.forEach((seat: any) => {
+									if (mainIndex === this.Seats[dropSeatRow].seat.length) {
+										this.removeLastDroppedItem('', ele)
+									}
+									if (mainIndex != this.Seats[dropSeatRow].seat.length) {
+										if (this.Seats[dropSeatRow].seat[mainIndex].ticket.length >= 1) {
+											mainIndex = mainIndex + 1
+										}
+									}
+								})
+							})
+							if (mainIndex != this.Seats[dropSeatRow].seat.length) {
+								this.Seats[dropSeatRow].seat[mainIndex].ticket.push(ele)
+							}
+						})
+					}
+				}
+			})
+		})
+	}
+	removeLastDroppedItem(main: any, item: any) {
+		this.Test_tickets.forEach((ele: any, index: any) => {
+			if (ele.name == item.category) {
+				this.Categoryindex = index
+				this.categorySelection(index)
 			}
 		})
-		let index=block.block_seats.indexOf(ticket)
-		block.block_seats.splice(index,1)
-		console.log(this.Seats)
+		this.SelectPlaceHolder = ''
+		this.Seats.forEach((element: any) => {
+			element.seat.forEach((seat: any) => {
+				if (seat.ticket.length) {
+					seat.ticket = seat.ticket.filter((val: any) => {
+						return val != item
+					})
+					this.Seats = [...new Set(this.Seats)]
+				}
+			})
+			if (!this.Test_tickets[this.Categoryindex].tickets.includes(item)) {
+				this.Test_tickets[this.Categoryindex].tickets.push(item)
+			}
+		});
 	}
 	True() {
 		return true
@@ -126,7 +218,6 @@ export class HomeComponent implements OnInit {
 		return false
 	}
 	/* TWO OBJECTS */
-
 	// Multi Select
 	multiSelect = {
 		// Put ".selected" on elements when clicking after longPress or Ctrl+Click
@@ -137,26 +228,20 @@ export class HomeComponent implements OnInit {
 		verifyDragStarted: false,
 		ctrlMode: false,
 		firstContainer: null as unknown as HTMLElement,
-
 		selectDrag(el: HTMLElement) {
 			while (!el.classList.contains('cdk-drag')) {
 				el = el.parentElement as HTMLElement;
 			}
 			return el;
 		},
-
 		mouseDown(e: Event) {
 			let target = this.selectDrag(e.target as HTMLElement);
 			let ctrlKey = (e as KeyboardEvent).ctrlKey;
-
 			if (this.multiSelect) {
 				// If multiSelect is enabled
-
 				/* The responsibility for removing only the first ".selected" has to be with mouseDown and not with mouseUp.
 						   if not you can't add the first one */
-
 				// Remove
-
 				let allSelected = document.querySelectorAll('.selected').length;
 				if (
 					allSelected == 1 &&
@@ -175,13 +260,11 @@ export class HomeComponent implements OnInit {
 					this.firstContainer = target.parentElement as HTMLElement; //saves the container of the first selected element
 					target.classList.add('selected', 'last'); // and add ".selected" and ".last" to the current element clicked
 				};
-
 				// If using CTRL
 				if (ctrlKey) {
 					this.ctrlMode = true;
 					addSelected();
 				}
-
 				// If using longPress
 				this.verifyLongPress = <any>setTimeout(() => {
 					// If there is a LongPress
@@ -189,20 +272,16 @@ export class HomeComponent implements OnInit {
 					addSelected();
 				}, this.longPressTime); // after "longPressTime"(ms)
 			}
-
 			//   console.log('selected length',document.querySelectorAll('.selected').length)
 		},
-
 		mouseUp(e: Event) {
 			clearTimeout(this.verifyLongPress); // cancel LongPress
-
 			if (this.multiSelect && !this.verifyDragStarted) {
 				// If multiSelect is enabled AND not start DragStarted
 				let target = this.selectDrag(e.target as HTMLElement);
 				let allSelected = document.querySelectorAll('.selected');
 				let ctrlKey = (e as KeyboardEvent).ctrlKey;
 				let last = document.querySelector('.last');
-
 				// If use Shift
 				if (last && (e as KeyboardEvent).shiftKey) {
 					// take range informations
@@ -211,7 +290,6 @@ export class HomeComponent implements OnInit {
 					let currIndex = containerLast.indexOf(target);
 					let max = Math.max(lastIndex, currIndex);
 					let min = Math.min(lastIndex, currIndex);
-
 					// toggle .selected in the range
 					for (let i = min; i <= max; i++) {
 						if (i != lastIndex) {
@@ -219,14 +297,12 @@ export class HomeComponent implements OnInit {
 							containerLast[i].classList.toggle('selected');
 						}
 					}
-
 					// put .last if last clicked was selected at end
 					if (target.classList.contains('selected')) {
 						last && last.classList.remove('last'); // remove .last from penult element clicked
 						target.classList.add('last'); // and add ".last" to the current element
 					}
 				}
-
 				//If don't use shift
 				else {
 					// To remove from selection
@@ -240,7 +316,6 @@ export class HomeComponent implements OnInit {
 						target.classList.remove('selected'); // remove ".selected"
 						target.classList.remove('last'); // remove ".last"
 					}
-
 					// To add to selection
 					else {
 						// if the clicked element does not have the ".selected"
@@ -263,20 +338,16 @@ export class HomeComponent implements OnInit {
 					}
 				}
 			}
-
 			//  console.log('mouse up selected length',document.querySelectorAll('.selected').length)
 		},
-
 		dragStarted() {
 			// console.log('test selected length',document.querySelectorAll('.selected').length)
 			this.verifyDragStarted = true; // shows to mouseDown and mouseUp that Drag started
 			clearTimeout(this.verifyLongPress); // cancel longPress
 		},
-
 		dragEnded() {
 			this.verifyDragStarted = false; // show mouseDown and mouseUp that Drag is over
 		},
-
 		dropListDropped(e: CdkDragDrop<string[]>) {
 			let el = e.item.element.nativeElement;
 			if (el.classList.contains('selected')) {
@@ -285,17 +356,13 @@ export class HomeComponent implements OnInit {
 			}
 		},
 	};
-
 	// Multi Drag
 	multiDrag = {
-		Seats: this.Seats,
-		utilitiesService: this.utilitiesService,
 		// Adjusts clicked items that have ".selected" to organize together
 		// Initial Variables
 		dragList: [''], // has the value of the selected items in sequence from listData
 		dragListCopy: [''], // a copy of the listData, but with the selected elements marked with "DragErase" to delete later
 		dragErase: Symbol('DragErase') as any, // a symbol to have unique value when deleting
-
 		dragStarted(e: CdkDragStart) {
 			if (e.source.element.nativeElement.classList.contains('selected')) {
 				// If the dragged element has ".selected"
@@ -308,22 +375,16 @@ export class HomeComponent implements OnInit {
 				let DOMcontainer = Array.from(DOMdragEl.parentElement!.children); // container where all draggable elements are
 				let DOMdragElIndex = DOMcontainer.indexOf(DOMdragEl); // index of the dragged element
 				let allSelected = document.querySelectorAll('.selected'); // get all the ".selected"
-
-
-
 				// Goes through all ".selected"
 				allSelected.forEach((eli) => {
 					//console.log(eli);
 					// get index of current element
 					let CurrDOMelIndexi = DOMcontainer.indexOf(eli);
-
 					// Add listData of current ".selected" to dragList
 					this.dragList.push(listData[CurrDOMelIndexi]);
-				//	console.log('selectedDragAbleItem', this.dragList);
-
+					//  console.log(this.dragList);
 					// Replaces current position in dragListCopy with "DragErase" (to erase exact position later)
 					this.dragListCopy[CurrDOMelIndexi] = this.dragErase;
-
 					// Put opacity effect (by CSS class ".hide") on elements (after starting Drag)
 					if (DOMdragElIndex !== CurrDOMelIndexi) {
 						eli.classList.add('hide');
@@ -331,16 +392,10 @@ export class HomeComponent implements OnInit {
 				});
 			}
 		},
-
 		dropListDropped(e: CdkDragDrop<string[]>) {
-			//console.log(e)
-			//console.log('dropListDropped selected length', document.querySelectorAll('.selected').length)
-			document.querySelectorAll('.selected').forEach((ele: any) => {
-				//console.log(ele)
-			})
+			// console.log('dropListDropped selected length',document.querySelectorAll('.selected').length)
 			if (e.previousContainer === e.container) {
 				// If in the same container
-
 				let posAdjust = e.previousIndex < e.currentIndex ? 1 : 0; // Adjusts the placement position
 				this.dragListCopy.splice(
 					e.currentIndex + posAdjust,
@@ -350,50 +405,30 @@ export class HomeComponent implements OnInit {
 				this.dragListCopy = this.dragListCopy.filter(
 					(el) => el !== this.dragErase
 				); // remove the "DragErase" from the list
-
-
-				console.log(e.container.data, this.dragListCopy)
 				// Pass item by item to final list
 				for (let i = 0; i < e.container.data.length; i++) {
 					e.container.data[i] = this.dragListCopy[i];
 				}
 			} else {
 				// If in different containers
-
 				// remove the "DragErase" from the list
 				this.dragListCopy = this.dragListCopy.filter(
 					(el) => el !== this.dragErase
 				);
-				//console.log(e.container.data, this.dragListCopy, this.dragList)
-				this.Seats.forEach((block: any) => {
-					block.block.forEach((ele: any) => {
-						if (e.container.data == ele.block_seats) {
-							let dropContainerSize=ele.block_seats.length + this.dragList.length
-							console.log(ele.name)
-							if (dropContainerSize <= ele.block_seat_limit ) {
-								// Pass item by item to initial list
-								for (let i = 0; i < e.previousContainer.data.length; i++) {
-									e.previousContainer.data[i] = this.dragListCopy[i];
-								}
-								for (let i = 0; i < this.dragList.length; i++) {
-									e.previousContainer.data.pop();
-								}
-								let otherListCopy = [...e.container.data]; // list of new container
-								otherListCopy.splice(e.currentIndex, 0, ...this.dragList); // put elements in otherListCopy
-
-								// Pass item by item to final list
-								for (let i = 0; i < otherListCopy.length; i++) {
-									e.container.data[i] = otherListCopy[i];
-								}
-							}
-							else {
-								this.utilitiesService.errorMessage(`Maximum ${ele.block_seat_limit} tickets are allowed`)
-							}
-						}
-					})
-				})
+				// Pass item by item to initial list
+				for (let i = 0; i < e.previousContainer.data.length; i++) {
+					e.previousContainer.data[i] = this.dragListCopy[i];
+				}
+				for (let i = 0; i < this.dragList.length; i++) {
+					e.previousContainer.data.pop();
+				}
+				let otherListCopy = [...e.container.data]; // list of new container
+				otherListCopy.splice(e.currentIndex, 0, ...this.dragList); // put elements in otherListCopy
+				// Pass item by item to final list
+				for (let i = 0; i < otherListCopy.length; i++) {
+					e.container.data[i] = otherListCopy[i];
+				}
 			}
-
 			// Remove ".hide"
 			let allHidden = document.querySelectorAll('.hide');
 			allHidden.forEach((el) => {
@@ -406,52 +441,85 @@ export class HomeComponent implements OnInit {
 					el.classList.remove('selected', 'last');
 				});
 			}, 300);
-
 			this.dragListCopy = []; // reset the dragListCopy
 			this.dragList = []; // reset the dragList
 		},
 	};
-
 	/* END TWO OBJECTS */
-
-	editBlock(block:any){
-		let block_name=block?.name
-		let block_limit=block?.block_seat_limit
-		let EditBlock=true
-
-		const dialogeRef=this.dialog.open(BlockComponent,{
-			minWidth:'auto',
-			height:'auto',
-			data:{
-				block_name,block_limit,EditBlock
-			}
+	manageBlock(e) {
+		this.router.navigate(['/block/flexi-block-list'])
+	}
+	seatCheckAll(e,row){
+		console.log(row)
+		row.seat.forEach((ele,i)=>{
+			this.seatCheck(e,i,ele)
 		})
 	}
-	manageBlock(seat:any){
-		let Seats=seat
-		let ManageBlock=true
-
-		const dialogeRef=this.dialog.open(BlockComponent,{
-			minWidth:'auto',
-			height:'auto',
-			data:{
-				Seats,ManageBlock
+	seatCheck(e, index, data) {
+		if(this.selectedBlock){
+			if (e.target.checked === true) {
+				data.hasBackground = true
+				if (this.selectedBlock) {
+					data.backgroundColor = this.selectedBlock.backgroundColor
+					data.blockName=this.selectedBlock.name
+				}
+				this.checkedSeatList.push(data)
 			}
+			if (e.target.checked === false) {
+				data.hasBackground = false
+				data.backgroundColor = ''
+				data.blockName=''
+				this.checkedSeatList.splice(this.checkedSeatList.findIndex(d => d.id === data.id), 1);
+			}
+			console.log(this.checkedSeatList)
+		}
+		else{
+			this.utilitiesService.errorMessage('Block is required')
+			e.target.checked=false
+		}
+	}
+	isChecked(e){
+		return e
+	}
+	seatEdit() {
+		this.seatEditMode = true
+	}
+	saveSeat() {
+		this.seatEditMode = false
+	}
+	cancelEdit() {
+		this.checkedSeatList.forEach(ele => {
+			ele.hasBackground = false
 		})
+		this.checkedSeatList = []
+		this.seatEditMode = false
 	}
-	expand(){
-		this.isExpand=true
+	blockSelection(e) {
+		console.log(e)
+		this.selectedBlock = e
 	}
-	shrink(){
-		this.isExpand=false
-	}
-	seatExpand(){
-		this.SeatExpand=true
-	}
-	seatShrink(){
-		this.SeatExpand=false
+	setBackgroundColor(f) {
+		let styles = {
+			'background-color': f.backgroundColor,
+		};
+		return styles;
 	}
 
+	addFlexiBlock() {
+		const dialogRef=this.dialog.open(CreateFlexiBlockComponent,
+		  {
+			width:'auto',
+			height:'auto'
+		  })
+
+		  dialogRef.afterClosed().subscribe(res=>{
+			if(res){
+				this.flexi_dataSource.push(res)
+				this.flexi_dataSource=[...this.flexi_dataSource]
+				localStorage.setItem('flexiBlock',JSON.stringify(this.flexi_dataSource))
+				this.utilitiesService.successMessage("Block created successfully")
+			}
+		  })
+
+	  }
 }
-
-

@@ -5,7 +5,7 @@
 }
 .example-container {
   max-width: 100%;
-  margin: 0 25px 25px 0;
+  margin: 0 25px 0px 0;
   display: inline-block;
   vertical-align: top;
 }
@@ -67,18 +67,22 @@
   padding: 15px;
 }
 .col1 {
-  width: 60%;
+  width: 90%;
   flex-direction: column !important;
 }
 .col2 {
-  width: 40%;
+  width: 10%;
 }
-.heading  {
+.heading {
   text-align: center;
   margin: 20px 0;
 }
 .ticket {
-  width: 100%;
+  width: 90px;
+  height: 40px;
+  font-size: 8px;
+  justify-content: center;
+  align-items: center;
 }
 .mat-form-field {
   display: block;
@@ -93,7 +97,7 @@
 
 .example-container {
   display: flex;
-  gap: 4px;
+  gap: 0px;
   flex-wrap: wrap;
 }
 h4 {
@@ -114,18 +118,35 @@ h4 {
   border: 1px solid rgb(204, 196, 196) !important;
   padding: 5px;
   margin-top: 15px;
+  width: 100%;
 }
 
 .select-all {
   margin: 10px;
 }
 
+// .delete {
+//   color: red;
+//   margin: 0 5px;
+//   font-size: 12px;
+// }
+// .delete:hover {
+//   cursor: pointer;
+// }
+// .width{
+//   width: 20px;
+//   font-size: 9px;
+// }
+.seat-name {
+  font-size: 8px;
+}
+
 .height {
-  min-height: 25px !important;
+  min-height: 15px !important;
   text-align: center;
 }
 .seat-width {
-  min-width: 20px;
+  min-width: 15px;
 }
 .ticket-in-seat {
   font-size: 5px;
@@ -137,8 +158,8 @@ h4 {
 .hasTicket {
   background: green;
   color: white;
-  min-height: 25px !important;
-  min-width: 20px;
+  min-height: 15px !important;
+  // min-width: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -148,81 +169,84 @@ h4 {
 // }
 .seats.seat-width.ng-star-inserted {
   min-width: 20px;
+  text-align: center;
 }
-.border{
-  border:1px solid rgb(204, 196, 196) !important;
+.border {
+  border: 1px solid rgb(204, 196, 196) !important;
   padding: 10px 5px;
   border-radius: 5px;
 }
-.no-border{
-  border:none;
+.no-border {
+  border: none;
 }
-
+legend {
+  position: relative;
+  top: 41px;
+  left: -25px;
+  font-size: 14px;
+  z-index: -10;
+}
 fieldset.example-container.seats.no-border {
   /* margin-left: 32px; */
   margin-left: 15px;
 }
-.delete:hover{
+.delete:hover {
   color: red;
   cursor: pointer;
 }
-.list-dragging{
+.list-dragging {
   width: 20px;
 }
-.cdk-drop-list-dragging .selected{
-  width: 20px;
-}
-
-// new Css
-
-.ticket {
-  width: 15%;
-  height: 40px;
+.col_name {
   font-size: 8px;
+  gap: 8px;
+  min-width: 20px;
+}
+.row_name {
+  font-size: 8px;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
-.block-name-center{
-  position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translate(-50%);
+.row_name_editor_mode{
+  align-items: end;
+  // padding-bottom: 6px;
 }
-.block{
-  width: 18%;
+.col-container {
+  gap: 3px;
+  margin-left: 20px;
+  margin-bottom: 10px;
 }
-.block-height{
-  min-height: 50px;
+.addBackgroundColor {
+  background: red;
 }
-.hasTicket{
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-}
-.flex{
-  display: flex;
-  gap:2px;
-}
-.flex-wrap{
-  flex-wrap: wrap;
-}
-.block-name {
-  font-size: 9px;
-  text-align: center;
-  margin-bottom: 5px;
-}
-.booked{
-  border: 1px solid green;
-  position: relative;
 
+::ng-deep {
+  .checkbox .mat-checkbox-inner-container-no-side-margin {
+    width: 6px;
+    height: 6px;
+  }
+  .as-split-gutter-icon {
+    z-index: 999999 !important;
+  }
+  .select-all-checkox .mat-checkbox-inner-container{
+    width: 8px;
+    height: 8px;
+  }
 }
-.booked-title{
-  background: green;
-    color: white;
-    padding: 2px;
-    border-radius: 2px;
-    margin-bottom: 5px;
+
+.single-seat-container{
+  padding: 4px;
 }
-.coll{
-  background-color: #fbfbfb;
+.select-all-checkox{
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+.col-container-editor-mode {
+   margin-left: 78px;
+}
+.seat-checkbox{
+  height: 8px;
 }

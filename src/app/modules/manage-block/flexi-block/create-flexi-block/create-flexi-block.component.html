@@ -1,0 +1,37 @@
+<ng-container>
+    <div class="head">
+        <div>{{"Add Block"}}</div>
+    </div>
+    <div>
+        <div class="mt-3 min-vw-50">
+            <form [formGroup]="form">
+                <div>
+                    <mat-form-field>
+                        <mat-label>
+                            <div>
+                                {{"Block Name"}} <span style="color:red ;">*</span>
+                            </div>
+
+                        </mat-label>
+                        <input type="text" matInput formControlName="name">
+                    </mat-form-field>
+                </div>
+                <div>
+                    <mat-form-field>
+                        <mat-label>
+                            <div>
+                                {{"Block Color"}} <span style="color:red ;">*</span>
+                            </div>
+                        </mat-label>
+                        <input type="text" matInput formControlName="backgroundColor">
+                    </mat-form-field>
+                </div>
+                <div class="mt-1">
+                    <button (click)="close()" type="button" class="btn btn-secondary m-1"
+                        data-dismiss="modal">Close</button>
+                    <button (click)="save()" type="button" class="btn btn-primary m-1">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-container>

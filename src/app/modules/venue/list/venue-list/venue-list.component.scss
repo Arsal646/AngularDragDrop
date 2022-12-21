@@ -1,0 +1,8 @@
+
+:host{
+    ::ng-deep{
+        .custom-table .mat-header-cell{
+            text-align: center;
+        }
+    }
+}

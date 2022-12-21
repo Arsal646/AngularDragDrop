@@ -1,18 +1,16 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CdkDragDrop, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Seats, Test_Ticket, Tickets } from './common/data';
-import { UtilitiesService } from './common/utilities.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material';
-import { BlockComponent } from './block/block/block.component';
-import { auto } from '@popperjs/core';
+import { Seats, Test_Ticket, Tickets } from 'src/pages/home/common/data';
+import { UtilitiesService } from 'src/pages/home/common/utilities.service';
+import { Location } from "@angular/common";
+
 @Component({
-	selector: 'app-home',
-	templateUrl: './home.component.html',
-	styleUrls: ['./home.component.scss']
+  selector: 'app-block-seat',
+  templateUrl: './block-seat.component.html',
+  styleUrls: ['./block-seat.component.scss']
 })
-export class HomeComponent implements OnInit {
-	todo: any = []
+export class BlockSeatComponent implements OnInit {
+  todo: any = []
 	done: any = []
 	Seats: any = Seats
 	Tickets: any = Tickets
@@ -30,7 +28,7 @@ export class HomeComponent implements OnInit {
 	SelectPlaceHolder: any
 	constructor(
 		public utilitiesService: UtilitiesService,
-		private dialog:MatDialog
+		private location:Location
 	) {
 	}
 	ngOnInit(): void {
@@ -415,29 +413,29 @@ export class HomeComponent implements OnInit {
 	/* END TWO OBJECTS */
 
 	editBlock(block:any){
-		let block_name=block?.name
-		let block_limit=block?.block_seat_limit
-		let EditBlock=true
+		// let block_name=block?.name
+		// let block_limit=block?.block_seat_limit
+		// let EditBlock=true
 
-		const dialogeRef=this.dialog.open(BlockComponent,{
-			minWidth:'auto',
-			height:'auto',
-			data:{
-				block_name,block_limit,EditBlock
-			}
-		})
+		// const dialogeRef=this.dialog.open(BlockComponent,{
+		// 	minWidth:'auto',
+		// 	height:'auto',
+		// 	data:{
+		// 		block_name,block_limit,EditBlock
+		// 	}
+		// })
 	}
 	manageBlock(seat:any){
-		let Seats=seat
-		let ManageBlock=true
+		// let Seats=seat
+		// let ManageBlock=true
 
-		const dialogeRef=this.dialog.open(BlockComponent,{
-			minWidth:'auto',
-			height:'auto',
-			data:{
-				Seats,ManageBlock
-			}
-		})
+		// const dialogeRef=this.dialog.open(BlockComponent,{
+		// 	minWidth:'auto',
+		// 	height:'auto',
+		// 	data:{
+		// 		Seats,ManageBlock
+		// 	}
+		// })
 	}
 	expand(){
 		this.isExpand=true
@@ -450,6 +448,9 @@ export class HomeComponent implements OnInit {
 	}
 	seatShrink(){
 		this.SeatExpand=false
+	}
+	back(){
+		this.location.back()
 	}
 
 }

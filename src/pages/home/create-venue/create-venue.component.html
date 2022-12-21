@@ -1,0 +1,75 @@
+<!-- First example using JavaScript and Angular ViewChild -->
+
+<div class="d-flex p-3">
+  <div class="col md-col10 font-medium">
+    <h4><i role="button" (click)="back()" class="bi bi-arrow-left-circle-fill ml-2 mr-2"></i>  Create Venue</h4>
+  </div>
+  <div class="col col-md-2 text-end"> <button class="btn btn-outline-primary" (click)="addHtmlElement()"><i
+        class="bi bi-plus"></i>Add Hall</button></div>
+</div>
+<div class="d-flex flex-column p-3" [formGroup]="form">
+  <mat-form-field class="mb-4" style="width:15vw; margin: 0 auto;">
+    <mat-label>
+      {{"Venue Name"}}
+    </mat-label>
+    <input type="text" matInput formControlName="venue_name">
+  </mat-form-field>
+  <div class="p-3 shadow-sm rounded-1" style=" width: 80vw;margin: 0 auto;">
+  <div class="col md-col10 d-flex gap-1 flex-lg-wrap justify-content-center" >
+    <div *ngFor="let item of element;let i=index">
+      <div role='button' class="card" style="width: 20rem;">
+        <div class="card-body cardBody" >
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h5 class="card-title">
+                <span *ngIf="!item.edit">{{item?.hall_name ? item?.hall_name:'hall'}}</span>
+                <mat-form-field *ngIf="item.edit" class="custom-font-size">
+                  <mat-label>
+                    {{'Hall Name'}}
+                  </mat-label>
+                  <input type="text" matInput formControlName="hall_name">
+                  <mat-error *ngIf="form.get('hall_name').hasError('required')">
+                    <span>Venue name is required</span>
+                  </mat-error>
+                </mat-form-field>
+              </h5>
+              <h6 class="card-subtitle mb-2 text-muted">
+                <span *ngIf="!item.edit">Hall Capacity : {{item?.hall_capacity ? item?.hall_capacity:0}}</span>
+                <mat-form-field *ngIf="item.edit" class="custom-font-size">
+                  <mat-label>
+                    {{'Hall Capacity'}}
+                  </mat-label>
+                  <input type="text" matInput formControlName="hall_capacity">
+                </mat-form-field>
+              </h6>
+              <h6 class="card-subtitle mb-2 text-muted">
+                <span *ngIf="!item.edit">Seat Type: {{item?.seat_type }} {{seatTypeEnum}}</span>
+                <mat-form-field *ngIf="item.edit" class="custom-font-size">
+                  <mat-label>
+                    {{'Seat Type'}}
+                  </mat-label>
+                  <mat-select formControlName="seat_type">
+                    <mat-option *ngFor="let item of seatType" [value]="item.name">
+                      {{item.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </h6>
+            </div>
+            <div>
+              <i *ngIf="!item.edit" (click)="editHall(element,item,i)" class="bi bi-pencil-square"></i>
+              <i *ngIf="item.edit" (click)="saveHall(element,item,i)" class="bi bi-check-circle"></i>
+            </div>
+          </div>
+          <br>
+          <h6  *ngIf="item.edit" (click)="saveHall(element,item,i)" class="btn border btn-primary"><a>Save</a></h6>
+          <h6 (click)="deleteHall(element,item,i)" class="btn border btn-danger"><a>Delete</a></h6>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class=" text-end" >
+    <button class="btn btn-outline-primary" (click)="save()"><i class="bi bi-plus"></i>Save</button>
+  </div>
+</div>
+</div>

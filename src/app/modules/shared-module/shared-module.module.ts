@@ -1,8 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { HomeComponent } from 'src/pages/home/home.component';
 import {MatSelectModule} from '@angular/material/select';
@@ -18,18 +15,10 @@ import { BlockComponent } from 'src/pages/home/block/block/block.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularSplitModule } from "angular-split";
-
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    SeatsManageComponent,
-    BlockComponent,
-
-  ],
+  declarations: [],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     DragDropModule,
     MatSelectModule,
     BrowserAnimationsModule,
@@ -43,9 +32,7 @@ import { AngularSplitModule } from "angular-split";
     MatDialogModule,
     ReactiveFormsModule,
     AngularSplitModule,
-    FormsModule,
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    FormsModule
+  ]
 })
-export class AppModule { }
+export class SharedModuleModule { }

@@ -1,0 +1,20 @@
+.small-font{
+    font-size: 8px !important;
+}
+.cardBody{
+    min-width: 15vw !important;
+}
+::ng-deep{
+    .card-body {
+        flex: 1 1 auto;
+        padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
+        color: var(--bs-card-color);
+        min-width: 15vw !important;
+    }
+    .buttonn{
+        z-index: 99999 !important;
+    }
+    .custom-font-size{
+        font-size: 12px !important;
+    }
+}
