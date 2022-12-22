@@ -3,27 +3,14 @@ import { Location } from "@angular/common";
 import { MatDialog } from '@angular/material';
 import { CreateFlexiBlockComponent } from '../create-flexi-block/create-flexi-block.component';
 import { UtilitiesService } from 'src/pages/home/common/utilities.service';
-const blocks = 	[
-  {
-    name: 'block1',
-    backgroundColor: 'blue'
-  },
-  {
-    name: 'block2',
-    backgroundColor: 'yellow'
-  },
-  {
-    name: 'block3',
-    backgroundColor: 'orange'
-  }
-]
-
+import { blocks } from 'src/pages/home/common/open-seat-data';
 @Component({
   selector: 'app-flexi-block-list',
   templateUrl: './flexi-block-list.component.html',
   styleUrls: ['./flexi-block-list.component.scss']
 })
 export class FlexiBlockListComponent implements OnInit {
+  blocks=blocks
   displayedColumns: string[] = ['name'];
   dataSource = []
   constructor(

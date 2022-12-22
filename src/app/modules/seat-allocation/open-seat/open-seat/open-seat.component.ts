@@ -1,39 +1,26 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CdkDragDrop, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Seats, Test_Ticket, Tickets } from 'src/pages/home/common/open-seat-data';
+import { blocks, Seats, Test_Ticket } from 'src/pages/home/common/open-seat-data';
 import { Location } from "@angular/common";
 import { reduce, timeInterval, timeout } from 'rxjs';
 import { UtilitiesService } from 'src/pages/home/common/utilities.service';
 import { Router } from '@angular/router';
 import { CreateFlexiBlockComponent } from 'src/app/modules/manage-block/flexi-block/create-flexi-block/create-flexi-block.component';
 import { MatDialog } from '@angular/material';
+import { FormBuilder, FormGroup } from '@angular/forms';
 @Component({
 	selector: 'app-open-seat',
 	templateUrl: './open-seat.component.html',
 	styleUrls: ['./open-seat.component.scss']
 })
 export class OpenSeatComponent implements OnInit {
-	flexi_dataSource=[]
-	blocks =
-		[
-			{
-				name: 'block1',
-				backgroundColor: 'blue'
-			},
-			{
-				name: 'block2',
-				backgroundColor: 'yellow'
-			},
-			{
-				name: 'block3',
-				backgroundColor: 'orange'
-			}
-		]
+	seatSelectform: FormGroup
+	blocks = blocks
+	flexi_dataSource = []
 	todo: any = []
 	done: any = []
 	Seats: any = Seats
-	Tickets: any = Tickets
-	Test_tickets: any = Test_Ticket
+	Tickets_dataSource: any = Test_Ticket
 	TicketsArray: any = []
 	BackupTicketsArray: any = []
 	DroppedListLength: any = []
@@ -45,31 +32,40 @@ export class OpenSeatComponent implements OnInit {
 	SelectPlaceHolder: any
 	checkedSeatList: any = []
 	seatEditMode: boolean = false
-	selectedBlock: any
+	selectedBlock: any = null
 	constructor(
 		private location: Location,
-		private utilitiesService:UtilitiesService,
-		private router:Router,
-		private dialog:MatDialog
-		) {
+		private utilitiesService: UtilitiesService,
+		private router: Router,
+		private dialog: MatDialog,
+		private fb: FormBuilder,
+	) {
 	}
 	ngOnInit(): void {
 		this.getTickets()
 		this.getSeats()
 		this.DroppedListLength = this.Seats.length;
-		this.SelectPlaceHolder = this.Test_tickets[this.Categoryindex].name
+		this.SelectPlaceHolder = this.Tickets_dataSource[this.Categoryindex].name
 		this.getflexiBlock()
-
 	}
-	getflexiBlock(){
-		const flexiBlock=JSON.parse(localStorage.getItem('flexiBlock'))
-		if(flexiBlock?.length){
-		  this.flexi_dataSource=[...flexiBlock]
+	// formInit(){
+	// 	this.seatSelectform = this.fb.group({
+	// 		unitArr: this.fb.array(
+	// 		  this.units.map((unit) => {
+	// 			return this.fb.control(false)
+	// 		  })
+	// 		)
+	// 	  });
+	// }
+	getflexiBlock() {
+		const flexiBlock = JSON.parse(localStorage.getItem('flexiBlock'))
+		if (flexiBlock?.length) {
+			this.flexi_dataSource = [...flexiBlock]
 		}
-		else{
-		  this.flexi_dataSource=[...this.blocks]
+		else {
+			this.flexi_dataSource = [...this.blocks]
 		}
-	  }
+	}
 	back() {
 		this.location.back()
 	}
@@ -83,7 +79,7 @@ export class OpenSeatComponent implements OnInit {
 	categorySelection(e: any) {
 		console.log(e)
 		this.Categoryindex = e
-		this.SelectPlaceHolder = this.Test_tickets[this.Categoryindex].name
+		this.SelectPlaceHolder = this.Tickets_dataSource[this.Categoryindex].name
 		console.log(this.SelectPlaceHolder)
 		return e
 	}
@@ -94,20 +90,39 @@ export class OpenSeatComponent implements OnInit {
 				for (let i = 1; i <= ele.numberOfSeat; i++) {
 					const seat = {
 						id: i,
-						item: 'S' + i,
-						rowIndex: index,
-						seatIndex: i - 1,
+						name: `R${index + 1}S${i}`,
+						row: index + 1,
+						col: i,
+						isChecked: false,
 						ticket: [
 						]
 					}
 					ele.seat.push(seat)
 				}
+
 			}
 			console.log(ele)
 		})
+		let getSeatFromLocalStorage = []
+		if (localStorage.getItem('blockSeat')) {
+			getSeatFromLocalStorage = JSON.parse(localStorage?.getItem('blockSeat'))
+		}
+
+		console.log(getSeatFromLocalStorage)
+		if (getSeatFromLocalStorage.length) {
+			this.checkedSeatList = getSeatFromLocalStorage
+			this.Seats.forEach(ele => {
+				getSeatFromLocalStorage.forEach(seat => {
+					const index = ele.seat.findIndex(item => item.name === seat.name)
+					if (index !== -1) {
+						ele.seat[index] = seat
+					}
+				})
+			})
+		}
 	}
 	getTickets() {
-		this.Test_tickets.forEach((ele: any, index: any) => {
+		this.Tickets_dataSource.forEach((ele: any, index: any) => {
 			if (ele.numberOfTicket) {
 				for (let i = 1; i <= ele.numberOfTicket; i++) {
 					const ticket = {
@@ -122,7 +137,7 @@ export class OpenSeatComponent implements OnInit {
 				}
 			}
 		})
-		console.log(this.Test_tickets)
+		console.log(this.Tickets_dataSource)
 	}
 	drop(event: CdkDragDrop<string[]>) {
 		// If current element has ".selected"
@@ -144,13 +159,13 @@ export class OpenSeatComponent implements OnInit {
 		this.Seats.forEach((ele: any) => {
 			ele.seat.forEach((dropSeat: any) => {
 				if (dropSeat.ticket === event.container.data) {
-					this.dropSeatRow = dropSeat.rowIndex
-					this.dropSeatIndex = dropSeat.seatIndex
+					this.dropSeatRow = dropSeat.row - 1
+					this.dropSeatIndex = dropSeat.col - 1
 				}
 			})
 		})
 		this.singleItemIndropZone(event.container.data, this.dropSeatRow, this.dropSeatIndex)
-		console.log(this.Test_tickets)
+		console.log(this.Tickets_dataSource)
 	}
 	singleItemIndropZone(seats: any, i: any, dropSeatIndex: any) {
 		let extraSeats: any = []
@@ -190,7 +205,7 @@ export class OpenSeatComponent implements OnInit {
 		})
 	}
 	removeLastDroppedItem(main: any, item: any) {
-		this.Test_tickets.forEach((ele: any, index: any) => {
+		this.Tickets_dataSource.forEach((ele: any, index: any) => {
 			if (ele.name == item.category) {
 				this.Categoryindex = index
 				this.categorySelection(index)
@@ -206,8 +221,8 @@ export class OpenSeatComponent implements OnInit {
 					this.Seats = [...new Set(this.Seats)]
 				}
 			})
-			if (!this.Test_tickets[this.Categoryindex].tickets.includes(item)) {
-				this.Test_tickets[this.Categoryindex].tickets.push(item)
+			if (!this.Tickets_dataSource[this.Categoryindex].tickets.includes(item)) {
+				this.Tickets_dataSource[this.Categoryindex].tickets.push(item)
 			}
 		});
 	}
@@ -449,36 +464,81 @@ export class OpenSeatComponent implements OnInit {
 	manageBlock(e) {
 		this.router.navigate(['/block/flexi-block-list'])
 	}
-	seatCheckAll(e,row){
-		console.log(row)
-		row.seat.forEach((ele,i)=>{
-			this.seatCheck(e,i,ele)
-		})
+	colSeatCheckAll(e, Seats, col_name) {
+		if (this.selectedBlock?.backgroundColor) {
+			let col = `S${col_name}`
+			let selctedColItem = []
+			console.log(col_name)
+			Seats.filter(ele => {
+				ele.seat.filter(item => {
+					if (item.name.includes(col)) {
+						item.isChecked = true
+						selctedColItem.push(item)
+					}
+				})
+			})
+			selctedColItem = [...selctedColItem]
+			console.log(selctedColItem)
+			this.seatCheckAll(e, selctedColItem)
+		}
+		else {
+			this.utilitiesService.errorMessage('Block is required')
+			e.target.checked = false
+		}
+
+	}
+	seatCheckAll(e, row) {
+		if (this.selectedBlock?.backgroundColor) {
+			row.forEach((ele, i) => {
+				ele.isChecked = e.target.checked
+				this.seatCheck(e, i, ele)
+			})
+		}
+		else {
+			this.utilitiesService.errorMessage('Block is required')
+			e.target.checked = false
+		}
+	}
+	clickTocheck(index, data) {
+		console.log(this.selectedBlock?.backgroundColor)
+		if (this.selectedBlock?.backgroundColor) {
+			data.isChecked = !data.isChecked
+			const event = {
+				target: {
+					checked: data.isChecked
+				}
+			}
+			this.seatCheck(event, index, data)
+
+		}
+		else {
+			this.utilitiesService.errorMessage('Block is required')
+			console.log(data, data.isChecked)
+		}
+
 	}
 	seatCheck(e, index, data) {
-		if(this.selectedBlock){
+		if (this.selectedBlock?.backgroundColor) {
 			if (e.target.checked === true) {
-				data.hasBackground = true
-				if (this.selectedBlock) {
-					data.backgroundColor = this.selectedBlock.backgroundColor
-					data.blockName=this.selectedBlock.name
-				}
+				data.backgroundColor = this.selectedBlock?.backgroundColor
+				data.block_id = this.selectedBlock?.id
 				this.checkedSeatList.push(data)
 			}
 			if (e.target.checked === false) {
-				data.hasBackground = false
 				data.backgroundColor = ''
-				data.blockName=''
-				this.checkedSeatList.splice(this.checkedSeatList.findIndex(d => d.id === data.id), 1);
+				data.block_id = ''
+				this.checkedSeatList.splice(this.checkedSeatList.findIndex(d => d.name === data.name), 1);
 			}
+			this.checkedSeatList = [... new Set(this.checkedSeatList)]
 			console.log(this.checkedSeatList)
 		}
-		else{
+		else {
 			this.utilitiesService.errorMessage('Block is required')
-			e.target.checked=false
+			e.target.checked = false
+			console.log('event', e.target.checked)
 		}
 	}
-	isChecked(e){
+	isChecked(e) {
 		return e
 	}
 	seatEdit() {
@@ -486,10 +546,12 @@ export class OpenSeatComponent implements OnInit {
 	}
 	saveSeat() {
 		this.seatEditMode = false
+		localStorage.setItem('blockSeat', JSON.stringify(this.checkedSeatList))
+		this.selectedBlock = null
 	}
 	cancelEdit() {
 		this.checkedSeatList.forEach(ele => {
-			ele.hasBackground = false
+			//ele.hasBackground = false
 		})
 		this.checkedSeatList = []
 		this.seatEditMode = false
@@ -501,25 +563,23 @@ export class OpenSeatComponent implements OnInit {
 	setBackgroundColor(f) {
 		let styles = {
 			'background-color': f.backgroundColor,
+			'cursor': 'pointer'
 		};
 		return styles;
 	}
-
 	addFlexiBlock() {
-		const dialogRef=this.dialog.open(CreateFlexiBlockComponent,
-		  {
-			width:'auto',
-			height:'auto'
-		  })
-
-		  dialogRef.afterClosed().subscribe(res=>{
-			if(res){
+		const dialogRef = this.dialog.open(CreateFlexiBlockComponent,
+			{
+				width: 'auto',
+				height: 'auto'
+			})
+		dialogRef.afterClosed().subscribe(res => {
+			if (res) {
 				this.flexi_dataSource.push(res)
-				this.flexi_dataSource=[...this.flexi_dataSource]
-				localStorage.setItem('flexiBlock',JSON.stringify(this.flexi_dataSource))
+				this.flexi_dataSource = [...this.flexi_dataSource]
+				localStorage.setItem('flexiBlock', JSON.stringify(this.flexi_dataSource))
 				this.utilitiesService.successMessage("Block created successfully")
 			}
-		  })
-
-	  }
+		})
+	}
 }

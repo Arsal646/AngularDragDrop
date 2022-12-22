@@ -209,12 +209,12 @@ fieldset.example-container.seats.no-border {
   align-items: center;
 }
 .row_name_editor_mode{
-  align-items: end;
+  align-items: flex-end;
   // padding-bottom: 6px;
 }
 .col-container {
   gap: 3px;
-  margin-left: 20px;
+  margin-left: 17px;
   margin-bottom: 10px;
 }
 .addBackgroundColor {
@@ -242,11 +242,15 @@ fieldset.example-container.seats.no-border {
   margin-right: 10px;
   display: flex;
   justify-content: center;
-  align-items: end;
+  align-items: flex-end;
 }
 .col-container-editor-mode {
    margin-left: 78px;
 }
 .seat-checkbox{
   height: 8px;
+  display: none;
+}
+.cursor-pointer{
+  cursor: pointer;
 }

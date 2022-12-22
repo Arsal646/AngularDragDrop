@@ -50,7 +50,11 @@
                             </ng-container>
                             <div class="d-flex col-container" [ngClass]="seatEditMode ? 'col-container-editor-mode':''">
                                 <ng-container *ngFor="let row_name of Seats[0].seat;let i = index">
-                                    <span class="col_name">{{i+1}}</span>
+                                    <div>
+                                        <div class="col_name">{{i+1}}</div>
+                                        <input *ngIf="seatEditMode" (change)="colSeatCheckAll($event,Seats,i+1)" style="width: 9px;" role="button" class="seat-checkbox" type="checkbox"
+                                         class="checkbox">
+                                    </div>
                                 </ng-container>
                             </div>
                             <ng-container *ngFor="let row of Seats;let i = index">
@@ -62,7 +66,7 @@
                                                     All</p>
                                             </mat-checkbox> -->
                                             <input role="button" class="seat-checkbox" type="checkbox"
-                                                (change)="seatCheckAll($event,row)" class="checkbox">
+                                                (change)="seatCheckAll($event,row.seat)" class="checkbox">
                                             <p style="font-size:8px;margin: 0 4px;">Select
                                                 All</p>
                                         </div>
@@ -72,14 +76,14 @@
                                             <ng-container *ngIf="seatEditMode">
                                                 <!-- <mat-checkbox (change)="seatCheck($event,i,f)"  [checked]="isChecked(f.hasBackground)"
                                                     class="checkbox"></mat-checkbox> -->
-                                                <input role="button" class="seat-checkbox" type="checkbox"
+                                                <input [id]="f.name" role="button" class="seat-checkbox" type="checkbox"
                                                     (change)="seatCheck($event,i,f)"
-                                                    [checked]="isChecked(f.hasBackground)">
+                                                    [checked]="isChecked(f.isChecked)">
                                             </ng-container>
-                                            <div class="single-seat-container"
-                                                [ngStyle]="f.hasBackground ? setBackgroundColor(f):{'background-color': 'white'}"
+                                            <div class="single-seat-container" (click)="seatEditMode ? clickTocheck(i,f):''"
+                                                [ngStyle]="f.isChecked ? setBackgroundColor(f):{'background-color': 'white'}"
                                                 *ngIf="f.ticket">
-                                                <div class="example-list height seat-width "
+                                                <div class="example-list height seat-width " [ngClass]="seatEditMode ? 'cursor-pointer':''"
                                                     [cdkDropListEnterPredicate]="f.ticket.length ? False:True"
                                                     cdkDropList [cdkDropListData]="f.ticket"
                                                     (cdkDropListDropped)="drop($event)">
@@ -121,7 +125,7 @@
                             <mat-form-field appearance="outline">
                                 <mat-select [placeholder]="SelectPlaceHolder"
                                     (selectionChange)="categorySelection($event.value)">
-                                    <mat-option *ngFor="let ticket of Test_tickets;let i=index" [value]="i">
+                                    <mat-option *ngFor="let ticket of Tickets_dataSource;let i=index" [value]="i">
                                         {{ticket.name}}
                                     </mat-option>
                                 </mat-select>
@@ -131,10 +135,10 @@
                             <div class=" flex">
                                 <div class="example-container" style="margin: 0;">
                                     <div class="example-list flex ticket-flex" cdkDropList
-                                        [cdkDropListData]="Test_tickets[Categoryindex].tickets"
+                                        [cdkDropListData]="Tickets_dataSource[Categoryindex].tickets"
                                         (cdkDropListDropped)="drop($event);multiSelect.dropListDropped($event)">
                                         <div class="example-box ticket" [ngClass]="AllSelected ? 'selected':''"
-                                            *ngFor="let item of Test_tickets[Categoryindex].tickets"
+                                            *ngFor="let item of Tickets_dataSource[Categoryindex].tickets"
                                             (pointerdown)="multiSelect.mouseDown($event)"
                                             (pointerup)="multiSelect.mouseUp($event)"
                                             (cdkDragStarted)="multiSelect.dragStarted();multiDrag.dragStarted($event)"
