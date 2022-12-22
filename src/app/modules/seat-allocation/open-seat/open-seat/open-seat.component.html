@@ -6,8 +6,8 @@
         <button (click)="manageBlock(Seats)" type="button" class="btn btn-outline-dark p-2">Manage Block</button>
     </div>
 </div>
-<div cdkDropListGroup style="display: flex;position: relative;">
-    <div style="width: 100%; height: auto ">
+<div cdkDropListGroup style="display: flex;position: relative; ">
+    <div style="width: 100%; min-height: 100vh; background:#fbfbfb">
         <as-split direction="horizontal">
             <as-split-area>
                 <as-split direction="horizontal">
@@ -15,22 +15,32 @@
                         <div style="position: fixed;z-index: 1;width: 80vw;">
                             <div class="d-flex justify-content-between mb-4">
                                 <div class="d-flex gap-2">
-                                    <div *ngFor="let item of flexi_dataSource">
-                                        <span [ngStyle]="setBackgroundColor(item)" style="min-width: 10px; min-height: 990px; color: transparent;font-size: 8px;">sss</span>
-                                        <span class="p-1" style="font-size: 8px" >{{item?.name}}</span>
-                                    </div>
+                                    <ng-container *ngIf="!seatEditMode">
+                                        <div *ngFor="let item of flexi_dataSource">
+                                            <span [ngStyle]="setBackgroundColor(item)" style="min-width: 10px; min-height: 990px; color: transparent;font-size: 8px;">sss</span>
+                                            <span class="p-1" style="font-size: 8px" >{{item?.name}}</span>
+                                        </div>
+                                    </ng-container>
+                                    <mat-radio-group aria-label="Select an option" *ngIf="seatEditMode">
+                                        <mat-radio-button *ngFor="let item of flexi_dataSource" [value]="item"
+                                            (change)="blockSelection($event.value)">
+                                            <span [ngStyle]="setBackgroundColor(item)"
+                                                style="min-width: 10px; min-height: 990px; color: transparent;font-size: 8px;">sss</span>
+                                            <span class="p-1" style="font-size: 8px">{{item?.name}}</span>
+                                        </mat-radio-button>
+                                    </mat-radio-group>
                                 </div>
-                               <div>
-                                <button *ngIf="seatEditMode && checkedSeatList.length" (click)="saveSeat()"
-                                class="btn btn-primary p-2 m-2">Save</button>
-                            <!-- <button  class="btn btn-primary p-2 m-2">Edit</button> -->
-                            <span *ngIf="!seatEditMode" (click)="seatEdit()" role="button"><i
-                                    class="bi bi-pencil-square"></i></span>
-                            <button *ngIf="seatEditMode" (click)="cancelEdit()"
-                                class="btn btn-danger p-2 m-2">Cancel</button>
-                               </div>
+                                <div>
+                                    <button *ngIf="seatEditMode && checkedSeatList.length" (click)="saveSeat()"
+                                        class="btn btn-primary p-2 m-2">Save</button>
+                                    <!-- <button  class="btn btn-primary p-2 m-2">Edit</button> -->
+                                    <span *ngIf="!seatEditMode" (click)="seatEdit()" role="button"><i
+                                            class="bi bi-pencil-square"></i></span>
+                                    <button *ngIf="seatEditMode" (click)="cancelEdit()"
+                                        class="btn btn-danger p-2 m-2">Cancel</button>
+                                </div>
                             </div>
-                            <ng-container *ngIf="seatEditMode">
+                            <!-- <ng-container *ngIf="seatEditMode">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                     <mat-form-field style="width: 200px">
                                         <mat-label>
@@ -47,13 +57,14 @@
                                         <i class="bi bi-plus-circle"></i>
                                     </div>
                                 </div>
-                            </ng-container>
+                            </ng-container> -->
                             <div class="d-flex col-container" [ngClass]="seatEditMode ? 'col-container-editor-mode':''">
                                 <ng-container *ngFor="let row_name of Seats[0].seat;let i = index">
                                     <div>
                                         <div class="col_name">{{i+1}}</div>
-                                        <input *ngIf="seatEditMode" (change)="colSeatCheckAll($event,Seats,i+1)" style="width: 9px;" role="button" class="seat-checkbox" type="checkbox"
-                                         class="checkbox">
+                                        <input *ngIf="seatEditMode" (change)="colSeatCheckAll($event,Seats,i+1)"
+                                            style="width: 9px;" role="button" class="seat-checkbox" type="checkbox"
+                                            class="checkbox">
                                     </div>
                                 </ng-container>
                             </div>
@@ -77,13 +88,14 @@
                                                 <!-- <mat-checkbox (change)="seatCheck($event,i,f)"  [checked]="isChecked(f.hasBackground)"
                                                     class="checkbox"></mat-checkbox> -->
                                                 <input [id]="f.name" role="button" class="seat-checkbox" type="checkbox"
-                                                    (change)="seatCheck($event,i,f)"
-                                                    [checked]="isChecked(f.isChecked)">
+                                                    (change)="seatCheck($event,i,f)" [checked]="isChecked(f.isChecked)">
                                             </ng-container>
-                                            <div class="single-seat-container" (click)="seatEditMode ? clickTocheck(i,f):''"
+                                            <div class="single-seat-container"
+                                                (click)="seatEditMode ? clickTocheck(i,f):''"
                                                 [ngStyle]="f.isChecked ? setBackgroundColor(f):{'background-color': 'white'}"
                                                 *ngIf="f.ticket">
-                                                <div class="example-list height seat-width " [ngClass]="seatEditMode ? 'cursor-pointer':''"
+                                                <div class="example-list height seat-width "
+                                                    [ngClass]="seatEditMode ? 'cursor-pointer':''"
                                                     [cdkDropListEnterPredicate]="f.ticket.length ? False:True"
                                                     cdkDropList [cdkDropListData]="f.ticket"
                                                     (cdkDropListDropped)="drop($event)">
@@ -120,7 +132,8 @@
                             </ng-container>
                         </div>
                     </as-split-area>
-                    <as-split-area [size]="15" class="p-3" style="background:#fbfbfb;z-index: 22;">
+                    <as-split-area *ngIf="!seatEditMode" [size]="15" class="p-3"
+                        style="background:#fbfbfb;z-index: 22;">
                         <div style="z-index: 2;">
                             <mat-form-field appearance="outline">
                                 <mat-select [placeholder]="SelectPlaceHolder"

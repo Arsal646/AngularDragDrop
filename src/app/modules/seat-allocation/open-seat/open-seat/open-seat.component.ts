@@ -482,7 +482,7 @@ export class OpenSeatComponent implements OnInit {
 			this.seatCheckAll(e, selctedColItem)
 		}
 		else {
-			this.utilitiesService.errorMessage('Block is required')
+			this.utilitiesService.errorMessage('Please select a block ')
 			e.target.checked = false
 		}
 
@@ -495,7 +495,7 @@ export class OpenSeatComponent implements OnInit {
 			})
 		}
 		else {
-			this.utilitiesService.errorMessage('Block is required')
+			this.utilitiesService.errorMessage('Please select a block ')
 			e.target.checked = false
 		}
 	}
@@ -512,7 +512,7 @@ export class OpenSeatComponent implements OnInit {
 
 		}
 		else {
-			this.utilitiesService.errorMessage('Block is required')
+			this.utilitiesService.errorMessage('Please select a block ')
 			console.log(data, data.isChecked)
 		}
 
@@ -533,7 +533,7 @@ export class OpenSeatComponent implements OnInit {
 			console.log(this.checkedSeatList)
 		}
 		else {
-			this.utilitiesService.errorMessage('Block is required')
+			this.utilitiesService.errorMessage('Please select a block ')
 			e.target.checked = false
 			console.log('event', e.target.checked)
 		}
@@ -551,7 +551,6 @@ export class OpenSeatComponent implements OnInit {
 	}
 	cancelEdit() {
 		this.checkedSeatList.forEach(ele => {
-			//ele.hasBackground = false
 		})
 		this.checkedSeatList = []
 		this.seatEditMode = false

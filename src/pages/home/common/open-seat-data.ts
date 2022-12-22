@@ -2,17 +2,58 @@
 export const Seats = [
   {
     name: "R1",
-    numberOfSeat: 5,
+    numberOfSeat: 50,
     seat: [
     ]
   },
   {
     name: "R2",
-    numberOfSeat: 5,
+    numberOfSeat: 50,
     seat: [
     ]
   },
-
+  {
+    name: "R3",
+    numberOfSeat: 50,
+    seat: [
+    ]
+  },
+  {
+    name: "R4",
+    numberOfSeat: 50,
+    seat: [
+    ]
+  },
+  {
+    name: "R5",
+    numberOfSeat: 50,
+    seat: [
+    ]
+  },
+  {
+    name: "R6",
+    numberOfSeat: 50,
+    seat: [
+    ]
+  },
+  {
+    name: "R7",
+    numberOfSeat: 50,
+    seat: [
+    ]
+  },
+  {
+    name: "R8",
+    numberOfSeat: 50,
+    seat: [
+    ]
+  },
+  {
+    name: "R9",
+    numberOfSeat: 50,
+    seat: [
+    ]
+  },
 
 ]
 

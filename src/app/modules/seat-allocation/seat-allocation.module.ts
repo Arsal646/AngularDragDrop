@@ -15,7 +15,7 @@ import { AngularSplitModule } from 'angular-split';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomBackgroundColorDirective } from 'src/pages/home/common/custom-background-color.directive';
-import { MatIconModule } from '@angular/material';
+import { MatIconModule, MatRadioModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -37,7 +37,8 @@ import { MatIconModule } from '@angular/material';
     ReactiveFormsModule,
     AngularSplitModule,
     FormsModule,
-    MatIconModule
+    MatIconModule,
+    MatRadioModule
 
   ]
   // providers: [
