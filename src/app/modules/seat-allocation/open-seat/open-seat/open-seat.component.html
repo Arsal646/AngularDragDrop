@@ -17,8 +17,9 @@
                                 <div class="d-flex gap-2">
                                     <ng-container *ngIf="!seatEditMode">
                                         <div *ngFor="let item of flexi_dataSource">
-                                            <span [ngStyle]="setBackgroundColor(item)" style="min-width: 10px; min-height: 990px; color: transparent;font-size: 8px;">sss</span>
-                                            <span class="p-1" style="font-size: 8px" >{{item?.name}}</span>
+                                            <span [ngStyle]="setBackgroundColor(item)"
+                                                style="min-width: 10px; min-height: 990px; color: transparent;font-size: 8px;">sss</span>
+                                            <span class="p-1" style="font-size: 8px">{{item?.name}}</span>
                                         </div>
                                     </ng-container>
                                     <mat-radio-group aria-label="Select an option" *ngIf="seatEditMode">
@@ -72,24 +73,14 @@
                                 <div>
                                     <div class="example-container seats no-border ">
                                         <div class="select-all-checkox" *ngIf="seatEditMode">
-                                            <!-- <mat-checkbox (change)="seatCheckAll($event,row)" class="checkbox">
-                                                <p style="font-size:8px ;">Select
-                                                    All</p>
-                                            </mat-checkbox> -->
                                             <input role="button" class="seat-checkbox" type="checkbox"
-                                                (change)="seatCheckAll($event,row.seat)" class="checkbox">
+                                                (change)="rowSeatCheckAll($event,row.seat)" class="checkbox">
                                             <p style="font-size:8px;margin: 0 4px;">Select
                                                 All</p>
                                         </div>
                                         <div class="row_name" [ngClass]="seatEditMode ? 'row_name_editor_mode':''">
                                             {{row.name}}</div>
                                         <div *ngFor="let f of row.seat" class="seats seat-width ">
-                                            <ng-container *ngIf="seatEditMode">
-                                                <!-- <mat-checkbox (change)="seatCheck($event,i,f)"  [checked]="isChecked(f.hasBackground)"
-                                                    class="checkbox"></mat-checkbox> -->
-                                                <input [id]="f.name" role="button" class="seat-checkbox" type="checkbox"
-                                                    (change)="seatCheck($event,i,f)" [checked]="isChecked(f.isChecked)">
-                                            </ng-container>
                                             <div class="single-seat-container"
                                                 (click)="seatEditMode ? clickTocheck(i,f):''"
                                                 [ngStyle]="f.isChecked ? setBackgroundColor(f):{'background-color': 'white'}"
@@ -100,9 +91,10 @@
                                                     cdkDropList [cdkDropListData]="f.ticket"
                                                     (cdkDropListDropped)="drop($event)">
                                                     <div class="hasTicket" *ngFor="let item of f.ticket; let i = index"
-                                                        cdkDrag mat-raised-button [tooltip]="$any(HtmlContent)"
-                                                        contentType="template" pointerEvents="auto" placement="bottom"
-                                                        [showDelay]=500 theme="light">
+                                                        cdkDrag [cdkDragDisabled]="true" mat-raised-button
+                                                        [tooltip]="$any(HtmlContent)" contentType="template"
+                                                        pointerEvents="auto" placement="bottom" [showDelay]=500
+                                                        theme="light">
                                                         <ng-template #HtmlContent>
                                                             <div class="card " style="text-align: left;">
                                                                 <div class="card-header p-2 font-weight-bold">
@@ -111,17 +103,17 @@
                                                                 <div class="card-body p-2">
                                                                     <p><strong>Name: </strong>{{item.name}}</p>
                                                                     <p><strong>Age: </strong>{{item.age}}</p>
-                                                                    <p><strong>Seat: </strong>{{f?.item}}</p>
-                                                                    <p><strong>Ticket: </strong>{{item?.item}}</p>
+                                                                    <p><strong>Seat: </strong>{{f?.id}}</p>
+                                                                    <p><strong>Ticket: </strong>{{item?.id}}</p>
                                                                 </div>
                                                                 <div class="card-footer text-muted p-2">
                                                                     <p>Double Click To Remove</p>
                                                                 </div>
                                                             </div>
                                                         </ng-template>
-                                                        <div (dblclick)="removeLastDroppedItem(f,item)" class="delete"
+                                                        <div (dblclick)="removeTicket(f,item)" class="delete"
                                                             style="display: flex;flex-direction:column;justify-content: center;align-items: center;gap:5px ;">
-                                                            <span class="ticket-in-seat">{{item.item}}</span>
+                                                            <span class="ticket-in-seat">{{item.id}}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -135,30 +127,76 @@
                     <as-split-area *ngIf="!seatEditMode" [size]="15" class="p-3"
                         style="background:#fbfbfb;z-index: 22;">
                         <div style="z-index: 2;">
-                            <mat-form-field appearance="outline">
-                                <mat-select [placeholder]="SelectPlaceHolder"
-                                    (selectionChange)="categorySelection($event.value)">
-                                    <mat-option *ngFor="let ticket of Tickets_dataSource;let i=index" [value]="i">
-                                        {{ticket.name}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                            <div class="d-flex justify-content-center align-items-center gap-3">
+                                <div style="width: 100%;" class="d-flex align-items-center">
+                                    <div class="col-10">
+                                        <mat-form-field>
+                                            <mat-label>
+                                                <span>Search</span>
+                                            </mat-label>
+                                            <input type="text" matInput [(ngModel)]="searchName"
+                                                (input)="ticketSearch($any($event).target.value)" autocomplete="off">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-2 text-end">
+                                        <i role="button" (click)="advanceFilter()" class="bi bi-sliders2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center flex-column"
+                                *ngIf="advanceFilterMode">
+                                <div style="width:100%;">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <div class="col-10">
+                                            <mat-form-field>
+                                                <mat-select (selectionChange)="categorySelection($event.value)"
+                                                    placeholder="Select Category" [(ngModel)]="category_value">
+                                                    <mat-option *ngFor="let ticket of Tickets_dataSource;let i=index"
+                                                        [value]="ticket.name">
+                                                        {{ticket.name}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-2 text-end">
+                                            <i role="button" (click)="clearFiler(filterBy.Category)"
+                                                class="bi bi-x-circle col-2"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="width: 100%;">
+                                    <div style="font-size: 12px;position: relative;top:14px">Age</div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <div class="col-10">
+                                            <mat-slider style="width: 100%;" class="col-10" [max]="60" [min]="5"
+                                                [step]="1" [thumbLabel]="true" [(ngModel)]="clearAgeSlider"
+                                                (change)="onSliderChange($event)">
+                                            </mat-slider>
+                                        </div>
+                                        <div class="col-2 text-end">
+                                            <i role="button" (click)="clearFiler(filterBy.Age)"
+                                                class="bi bi-x-circle col-2"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <mat-checkbox (change)="selectAll($event)" class="example-margin margin select-all">Select
                                 All</mat-checkbox>
                             <div class=" flex">
                                 <div class="example-container" style="margin: 0;">
                                     <div class="example-list flex ticket-flex" cdkDropList
-                                        [cdkDropListData]="Tickets_dataSource[Categoryindex].tickets"
+                                        [cdkDropListData]="ticketfilterArray"
                                         (cdkDropListDropped)="drop($event);multiSelect.dropListDropped($event)">
                                         <div class="example-box ticket" [ngClass]="AllSelected ? 'selected':''"
-                                            *ngFor="let item of Tickets_dataSource[Categoryindex].tickets"
+                                            *ngFor="let item of ticketfilterArray"
                                             (pointerdown)="multiSelect.mouseDown($event)"
                                             (pointerup)="multiSelect.mouseUp($event)"
                                             (cdkDragStarted)="multiSelect.dragStarted();multiDrag.dragStarted($event)"
                                             (cdkDragEnded)="multiSelect.dragEnded()" cdkDrag>
                                             <div>
                                                 <p>{{item?.name}}</p>
-                                                <p>{{item?.item}}</p>
+                                                <p>{{item?.id}}</p>
+                                                <p>{{item?.age}}</p>
                                             </div>
                                         </div>
                                     </div>

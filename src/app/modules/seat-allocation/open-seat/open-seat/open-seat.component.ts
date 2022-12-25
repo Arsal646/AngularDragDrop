@@ -6,14 +6,20 @@ import { reduce, timeInterval, timeout } from 'rxjs';
 import { UtilitiesService } from 'src/pages/home/common/utilities.service';
 import { Router } from '@angular/router';
 import { CreateFlexiBlockComponent } from 'src/app/modules/manage-block/flexi-block/create-flexi-block/create-flexi-block.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSliderChange } from '@angular/material';
 import { FormBuilder, FormGroup } from '@angular/forms';
+export enum filterBy {
+	Category = 'category',
+	Name = 'name',
+	Age = 'age'
+}
 @Component({
 	selector: 'app-open-seat',
 	templateUrl: './open-seat.component.html',
 	styleUrls: ['./open-seat.component.scss']
 })
 export class OpenSeatComponent implements OnInit {
+	filterBy = filterBy
 	seatSelectform: FormGroup
 	blocks = blocks
 	flexi_dataSource = []
@@ -33,6 +39,12 @@ export class OpenSeatComponent implements OnInit {
 	checkedSeatList: any = []
 	seatEditMode: boolean = false
 	selectedBlock: any = null
+	Ticket_fullData: any = []
+	ticketfilterArray = []
+	clearAgeSlider
+	category_value = 'Select Category'
+	advanceFilterMode: boolean = false
+	searchName
 	constructor(
 		private location: Location,
 		private utilitiesService: UtilitiesService,
@@ -77,11 +89,8 @@ export class OpenSeatComponent implements OnInit {
 		}
 	}
 	categorySelection(e: any) {
-		console.log(e)
-		this.Categoryindex = e
-		this.SelectPlaceHolder = this.Tickets_dataSource[this.Categoryindex].name
-		console.log(this.SelectPlaceHolder)
-		return e
+		this.category_value = e
+		this.ticketFilter(this.category_value, filterBy.Category)
 	}
 	getSeats() {
 		this.Seats.forEach((ele: any, index: any) => {
@@ -89,7 +98,7 @@ export class OpenSeatComponent implements OnInit {
 			if (ele.numberOfSeat) {
 				for (let i = 1; i <= ele.numberOfSeat; i++) {
 					const seat = {
-						id: i,
+						id: `R${index + 1}S${i}`,
 						name: `R${index + 1}S${i}`,
 						row: index + 1,
 						col: i,
@@ -99,16 +108,14 @@ export class OpenSeatComponent implements OnInit {
 					}
 					ele.seat.push(seat)
 				}
-
 			}
-			console.log(ele)
+			////console.log(ele)
 		})
 		let getSeatFromLocalStorage = []
 		if (localStorage.getItem('blockSeat')) {
 			getSeatFromLocalStorage = JSON.parse(localStorage?.getItem('blockSeat'))
 		}
-
-		console.log(getSeatFromLocalStorage)
+		////console.log(getSeatFromLocalStorage)
 		if (getSeatFromLocalStorage.length) {
 			this.checkedSeatList = getSeatFromLocalStorage
 			this.Seats.forEach(ele => {
@@ -127,22 +134,25 @@ export class OpenSeatComponent implements OnInit {
 				for (let i = 1; i <= ele.numberOfTicket; i++) {
 					const ticket = {
 						name: 'Name ' + i,
-						id: i,
-						age: 30,
+						id: 'C' + (index + 1) + 'T' + i,
+						age: `${i + 10}`,
 						title: 'Mr/Ms',
-						item: 'C' + (index + 1) + 'T' + i,
 						category: ele.name
 					}
 					ele.tickets.push(ticket)
+					this.Ticket_fullData.push(ticket)
 				}
 			}
 		})
-		console.log(this.Tickets_dataSource)
+		this.ticketfilterArray = this.Ticket_fullData
+		//console.log(this.Ticket_fullData)
 	}
 	drop(event: CdkDragDrop<string[]>) {
+		console.log(event)
 		// If current element has ".selected"
 		if (event.item.element.nativeElement.classList.contains("selected")) {
 			this.multiDrag.dropListDropped(event);
+			this.removeFromTicketMainArray(event.container.data, event.previousContainer.data)
 		}
 		// If dont have ".selected" (normal case)
 		else {
@@ -153,8 +163,10 @@ export class OpenSeatComponent implements OnInit {
 					event.container.data,
 					event.previousIndex,
 					event.currentIndex);
+				this.removeFromTicketMainArray(event.container.data, event.previousContainer.data)
 			}
 		}
+		//console.log(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex)
 		this.dropedtickets = event.container.data
 		this.Seats.forEach((ele: any) => {
 			ele.seat.forEach((dropSeat: any) => {
@@ -165,13 +177,50 @@ export class OpenSeatComponent implements OnInit {
 			})
 		})
 		this.singleItemIndropZone(event.container.data, this.dropSeatRow, this.dropSeatIndex)
-		console.log(this.Tickets_dataSource)
+		////console.log(this.Tickets_dataSource)
+	}
+	removeFromTicketMainArray(dragData?, previousContainerData?, item?) {
+		console.log('dragedItem', dragData.length, 'preContainer', previousContainerData.length)
+		if (dragData.length) {
+			if (previousContainerData.length >= 0) {
+				dragData.forEach(ele => {
+					this.Ticket_fullData = this.Ticket_fullData.filter(item => {
+						return item != ele
+					})
+				})
+				//console.log(this.Ticket_fullData)
+			}
+		}
+		if (item) {
+			if (!this.Ticket_fullData.includes(item)) {
+				this.Ticket_fullData.push(item)
+			}
+			this.resetFilter()
+		}
+		//this.resetFilter()
+
+	}
+	removeTicket(data, item) {
+		console.log('TicketFullDataPre', this.Ticket_fullData)
+		this.Ticket_fullData.push(item)
+		const index = data.ticket.findIndex(ele => ele.id === item.id)
+		data.ticket.splice(index, 1)
+		this.resetFilter()
+		console.log('TicketFullDataAfter', this.Ticket_fullData)
+	}
+	resetFilter() {
+		this.category_value = 'Select Category'
+		this.clearAgeSlider = 5
+		this.searchName = ''
+		this.ticketFilter('', filterBy.Category)
+		this.ticketFilter('', filterBy.Age)
+		this.ticketFilter('', filterBy.Name)
 	}
 	singleItemIndropZone(seats: any, i: any, dropSeatIndex: any) {
 		let extraSeats: any = []
 		let mainIndex = dropSeatIndex
 		let dropSeatRow: any = i
-		console.log('mainIndex', mainIndex)
+		//console.log('mainIndex', mainIndex)
 		this.Seats.map((seats: any) => {
 			seats.seat.map((seat: any) => {
 				if (seat.ticket.length > 1) {
@@ -187,6 +236,7 @@ export class OpenSeatComponent implements OnInit {
 								seats.seat.forEach((seat: any) => {
 									if (mainIndex === this.Seats[dropSeatRow].seat.length) {
 										this.removeLastDroppedItem('', ele)
+										this.removeFromTicketMainArray('', '', ele)
 									}
 									if (mainIndex != this.Seats[dropSeatRow].seat.length) {
 										if (this.Seats[dropSeatRow].seat[mainIndex].ticket.length >= 1) {
@@ -205,26 +255,26 @@ export class OpenSeatComponent implements OnInit {
 		})
 	}
 	removeLastDroppedItem(main: any, item: any) {
-		this.Tickets_dataSource.forEach((ele: any, index: any) => {
-			if (ele.name == item.category) {
-				this.Categoryindex = index
-				this.categorySelection(index)
-			}
-		})
-		this.SelectPlaceHolder = ''
-		this.Seats.forEach((element: any) => {
-			element.seat.forEach((seat: any) => {
-				if (seat.ticket.length) {
-					seat.ticket = seat.ticket.filter((val: any) => {
-						return val != item
-					})
-					this.Seats = [...new Set(this.Seats)]
-				}
-			})
-			if (!this.Tickets_dataSource[this.Categoryindex].tickets.includes(item)) {
-				this.Tickets_dataSource[this.Categoryindex].tickets.push(item)
-			}
-		});
+		// this.Tickets_dataSource.forEach((ele: any, index: any) => {
+		// 	if (ele.name == item.category) {
+		// 		this.Categoryindex = index
+		// 		this.categorySelection(index)
+		// 	}
+		// })
+		// this.SelectPlaceHolder = ''
+		// this.Seats.forEach((element: any) => {
+		// 	element.seat.forEach((seat: any) => {
+		// 		if (seat.ticket.length) {
+		// 			seat.ticket = seat.ticket.filter((val: any) => {
+		// 				return val != item
+		// 			})
+		// 			this.Seats = [...new Set(this.Seats)]
+		// 		}
+		// 	})
+		// 	if (!this.Tickets_dataSource[this.Categoryindex].tickets.includes(item)) {
+		// 		this.Tickets_dataSource[this.Categoryindex].tickets.push(item)
+		// 	}
+		// });
 	}
 	True() {
 		return true
@@ -287,7 +337,7 @@ export class OpenSeatComponent implements OnInit {
 					addSelected();
 				}, this.longPressTime); // after "longPressTime"(ms)
 			}
-			//   console.log('selected length',document.querySelectorAll('.selected').length)
+			//   //console.log('selected length',document.querySelectorAll('.selected').length)
 		},
 		mouseUp(e: Event) {
 			clearTimeout(this.verifyLongPress); // cancel LongPress
@@ -353,10 +403,10 @@ export class OpenSeatComponent implements OnInit {
 					}
 				}
 			}
-			//  console.log('mouse up selected length',document.querySelectorAll('.selected').length)
+			//  //console.log('mouse up selected length',document.querySelectorAll('.selected').length)
 		},
 		dragStarted() {
-			// console.log('test selected length',document.querySelectorAll('.selected').length)
+			// //console.log('test selected length',document.querySelectorAll('.selected').length)
 			this.verifyDragStarted = true; // shows to mouseDown and mouseUp that Drag started
 			clearTimeout(this.verifyLongPress); // cancel longPress
 		},
@@ -365,6 +415,7 @@ export class OpenSeatComponent implements OnInit {
 		},
 		dropListDropped(e: CdkDragDrop<string[]>) {
 			let el = e.item.element.nativeElement;
+			el.classList.add('dragStarted')
 			if (el.classList.contains('selected')) {
 				// the dragged element was of the "selected" class
 				this.multiSelect = false; // disable multiSelect
@@ -386,18 +437,18 @@ export class OpenSeatComponent implements OnInit {
 				this.dragList = []; // reset the dragList
 				this.dragListCopy = [...listData]; // copy listData into variable
 				let DOMdragEl = e.source.element.nativeElement; // dragged element
-				//console.log('ele', DOMdragEl);
+				////console.log('ele', DOMdragEl);
 				let DOMcontainer = Array.from(DOMdragEl.parentElement!.children); // container where all draggable elements are
 				let DOMdragElIndex = DOMcontainer.indexOf(DOMdragEl); // index of the dragged element
 				let allSelected = document.querySelectorAll('.selected'); // get all the ".selected"
 				// Goes through all ".selected"
 				allSelected.forEach((eli) => {
-					//console.log(eli);
+					////console.log(eli);
 					// get index of current element
 					let CurrDOMelIndexi = DOMcontainer.indexOf(eli);
 					// Add listData of current ".selected" to dragList
 					this.dragList.push(listData[CurrDOMelIndexi]);
-					//  console.log(this.dragList);
+					//  //console.log(this.dragList);
 					// Replaces current position in dragListCopy with "DragErase" (to erase exact position later)
 					this.dragListCopy[CurrDOMelIndexi] = this.dragErase;
 					// Put opacity effect (by CSS class ".hide") on elements (after starting Drag)
@@ -408,7 +459,7 @@ export class OpenSeatComponent implements OnInit {
 			}
 		},
 		dropListDropped(e: CdkDragDrop<string[]>) {
-			// console.log('dropListDropped selected length',document.querySelectorAll('.selected').length)
+			// //console.log('dropListDropped selected length',document.querySelectorAll('.selected').length)
 			if (e.previousContainer === e.container) {
 				// If in the same container
 				let posAdjust = e.previousIndex < e.currentIndex ? 1 : 0; // Adjusts the placement position
@@ -442,6 +493,7 @@ export class OpenSeatComponent implements OnInit {
 				// Pass item by item to final list
 				for (let i = 0; i < otherListCopy.length; i++) {
 					e.container.data[i] = otherListCopy[i];
+					console.log(e.container.data[i])
 				}
 			}
 			// Remove ".hide"
@@ -466,28 +518,24 @@ export class OpenSeatComponent implements OnInit {
 	}
 	colSeatCheckAll(e, Seats, col_name) {
 		if (this.selectedBlock?.backgroundColor) {
-			let col = `S${col_name}`
 			let selctedColItem = []
-			console.log(col_name)
 			Seats.filter(ele => {
 				ele.seat.filter(item => {
-					if (item.name.includes(col)) {
+					if (item.col === col_name) {
 						item.isChecked = true
 						selctedColItem.push(item)
 					}
 				})
 			})
 			selctedColItem = [...selctedColItem]
-			console.log(selctedColItem)
-			this.seatCheckAll(e, selctedColItem)
+			this.rowSeatCheckAll(e, selctedColItem)
 		}
 		else {
 			this.utilitiesService.errorMessage('Please select a block ')
 			e.target.checked = false
 		}
-
 	}
-	seatCheckAll(e, row) {
+	rowSeatCheckAll(e, row) {
 		if (this.selectedBlock?.backgroundColor) {
 			row.forEach((ele, i) => {
 				ele.isChecked = e.target.checked
@@ -500,7 +548,6 @@ export class OpenSeatComponent implements OnInit {
 		}
 	}
 	clickTocheck(index, data) {
-		console.log(this.selectedBlock?.backgroundColor)
 		if (this.selectedBlock?.backgroundColor) {
 			data.isChecked = !data.isChecked
 			const event = {
@@ -508,14 +555,13 @@ export class OpenSeatComponent implements OnInit {
 					checked: data.isChecked
 				}
 			}
+			console.log(this.selectedBlock,data)
 			this.seatCheck(event, index, data)
-
 		}
 		else {
 			this.utilitiesService.errorMessage('Please select a block ')
-			console.log(data, data.isChecked)
+			//console.log(data, data.isChecked)
 		}
-
 	}
 	seatCheck(e, index, data) {
 		if (this.selectedBlock?.backgroundColor) {
@@ -530,17 +576,17 @@ export class OpenSeatComponent implements OnInit {
 				this.checkedSeatList.splice(this.checkedSeatList.findIndex(d => d.name === data.name), 1);
 			}
 			this.checkedSeatList = [... new Set(this.checkedSeatList)]
-			console.log(this.checkedSeatList)
+			//console.log(this.checkedSeatList)
 		}
 		else {
 			this.utilitiesService.errorMessage('Please select a block ')
 			e.target.checked = false
-			console.log('event', e.target.checked)
+			//console.log('event', e.target.checked)
 		}
 	}
-	isChecked(e) {
-		return e
-	}
+	// isChecked(e) {
+	// 	return e
+	// }
 	seatEdit() {
 		this.seatEditMode = true
 	}
@@ -556,7 +602,7 @@ export class OpenSeatComponent implements OnInit {
 		this.seatEditMode = false
 	}
 	blockSelection(e) {
-		console.log(e)
+		//console.log(e)
 		this.selectedBlock = e
 	}
 	setBackgroundColor(f) {
@@ -580,5 +626,31 @@ export class OpenSeatComponent implements OnInit {
 				this.utilitiesService.successMessage("Block created successfully")
 			}
 		})
+	}
+	ticketSearch(e) {
+		this.ticketFilter(e, filterBy.Name)
+	}
+	ticketFilter(query, filterBy) {
+		this.ticketfilterArray = this.Ticket_fullData.filter(ele => {
+			return ele[filterBy].includes(query)
+		})
+	}
+	onSliderChange(event: MatSliderChange) {
+		//console.log(event.value)
+		const ageValue = event.value
+		this.ticketFilter(ageValue, filterBy.Age)
+	}
+	clearFiler(filter) {
+		if (filter === filterBy.Category) {
+			this.ticketFilter('', filterBy.Category)
+			this.category_value = 'Select Category'
+		}
+		if (filter === filterBy.Age) {
+			this.ticketFilter('', filterBy.Age)
+			this.clearAgeSlider = 5
+		}
+	}
+	advanceFilter() {
+		this.advanceFilterMode = !this.advanceFilterMode
 	}
 }

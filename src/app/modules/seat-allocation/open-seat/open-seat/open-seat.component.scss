@@ -39,6 +39,10 @@
   border-radius: 4px;
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
     0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  width: 10px !important;
+  height: 10px !important;
+  border: 3px solid;
+  font-size: 1px !important;
 }
 
 .cdk-drag-placeholder {
@@ -59,6 +63,16 @@
 }
 .example-list.cdk-drop-list-dragging {
   border: 1px solid green;
+  width: 10px !important;
+  height: 10px !important;
+  font-size: 8px;
+
+}
+.cdk-drop-list-receiving{
+  width: 10px !important;
+  height: 10px !important;
+  font-size: 1px;
+
 }
 .coll {
   border: 1px solid #bbb4b4;
@@ -208,7 +222,7 @@ fieldset.example-container.seats.no-border {
   justify-content: center;
   align-items: center;
 }
-.row_name_editor_mode{
+.row_name_editor_mode {
   align-items: flex-end;
   // padding-bottom: 6px;
 }
@@ -229,28 +243,37 @@ fieldset.example-container.seats.no-border {
   .as-split-gutter-icon {
     z-index: 999999 !important;
   }
-  .select-all-checkox .mat-checkbox-inner-container{
+  .select-all-checkox .mat-checkbox-inner-container {
     width: 8px;
     height: 8px;
   }
+  .mat-form-field {
+    font-size: 12px !important;
+  }
+  .cdk-drop-list-dragging .selected{
+    border: 1px solid red;
+  }
 }
 
-.single-seat-container{
+.single-seat-container {
   padding: 4px;
 }
-.select-all-checkox{
+.select-all-checkox {
   margin-right: 10px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
 }
 .col-container-editor-mode {
-   margin-left: 78px;
+  margin-left: 78px;
 }
-.seat-checkbox{
+.seat-checkbox {
   height: 8px;
   display: none;
 }
-.cursor-pointer{
+.cursor-pointer {
   cursor: pointer;
+}
+.isDragging{
+  color: red;
 }

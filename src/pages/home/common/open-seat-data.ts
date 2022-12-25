@@ -60,24 +60,12 @@ export const Seats = [
 export const Test_Ticket = [
   {
     name: "Category1",
-    numberOfTicket: 50,
+    numberOfTicket: 4,
     tickets: [
     ]
   },
   {
     name: "Category2",
-    numberOfTicket: 4,
-    tickets: [
-    ]
-  },
-  {
-    name: "Category3",
-    numberOfTicket: 4,
-    tickets: [
-    ]
-  },
-  {
-    name: "Category4",
     numberOfTicket: 4,
     tickets: [
     ]
