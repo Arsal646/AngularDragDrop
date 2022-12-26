@@ -16,12 +16,16 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomBackgroundColorDirective } from 'src/pages/home/common/custom-background-color.directive';
 import { MatIconModule, MatRadioModule, MatSliderModule } from '@angular/material';
+import { SearchAlertComponent } from './search-alert/search-alert.component';
+import { SearchPipe } from 'src/pages/home/common/search.pipe';
 
 @NgModule({
   declarations: [
     OpenSeatComponent,
     BlockSeatComponent,
-    CustomBackgroundColorDirective
+    CustomBackgroundColorDirective,
+    SearchAlertComponent,
+    SearchPipe
   ],
   imports: [
     CommonModule,

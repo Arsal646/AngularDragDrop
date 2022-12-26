@@ -1,0 +1,47 @@
+<ng-container>
+    <div class="head">
+        <div>{{"Advance Search"}}</div>
+    </div>
+    <div [formGroup]="form">
+        <div class="d-flex justify-content-center align-items-center flex-column">
+            <div style="width:100%;">
+                <div class="d-flex justify-content-center align-items-center">
+                    <div class="col-10">
+                        <mat-form-field style="width: 100%;">
+                            <mat-select placeholder="Select Category" formControlName="category">
+                                <mat-option *ngFor="let ticket of Tickets_dataSource;let i=index" [value]="ticket.name">
+                                    {{ticket.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-2 text-end">
+                        <i role="button" class="bi bi-x-circle col-2"></i>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 100%;">
+                <div>Age</div>
+                <div class="d-flex justify-content-center align-items-center gap-2">
+                    <mat-form-field>
+                        <mat-label>
+                            <span>from</span>
+                        </mat-label>
+                        <input type="text" matInput formControlName="age_start">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>
+                            <span>to</span>
+                        </mat-label>
+                        <input type="text" matInput formControlName="age_end">
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="mt-1 d-flex justify-content-end">
+            <button (click)="save()" type="button" class="btn btn-primary m-1">Search</button>
+            <button (click)="close()" type="button" class="btn btn-secondary m-1"
+                data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</ng-container>

@@ -57,7 +57,7 @@ export const Seats = [
 
 ]
 
-export const Test_Ticket = [
+export const Tickets_dataSource = [
   {
     name: "Category1",
     numberOfTicket: 4,

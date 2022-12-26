@@ -1,13 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CdkDragDrop, CdkDragStart, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { blocks, Seats, Test_Ticket } from 'src/pages/home/common/open-seat-data';
+import { blocks, Seats, Tickets_dataSource } from 'src/pages/home/common/open-seat-data';
 import { Location } from "@angular/common";
-import { reduce, timeInterval, timeout } from 'rxjs';
+import { debounceTime, reduce, timeInterval, timeout } from 'rxjs';
 import { UtilitiesService } from 'src/pages/home/common/utilities.service';
 import { Router } from '@angular/router';
 import { CreateFlexiBlockComponent } from 'src/app/modules/manage-block/flexi-block/create-flexi-block/create-flexi-block.component';
 import { MatDialog, MatSliderChange } from '@angular/material';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { SearchAlertComponent } from '../../search-alert/search-alert.component';
 export enum filterBy {
 	Category = 'category',
 	Name = 'name',
@@ -19,6 +20,8 @@ export enum filterBy {
 	styleUrls: ['./open-seat.component.scss']
 })
 export class OpenSeatComponent implements OnInit {
+	FormKeys = []
+	form: FormGroup
 	filterBy = filterBy
 	seatSelectform: FormGroup
 	blocks = blocks
@@ -26,7 +29,7 @@ export class OpenSeatComponent implements OnInit {
 	todo: any = []
 	done: any = []
 	Seats: any = Seats
-	Tickets_dataSource: any = Test_Ticket
+	Tickets_dataSource: any = Tickets_dataSource
 	TicketsArray: any = []
 	BackupTicketsArray: any = []
 	DroppedListLength: any = []
@@ -59,16 +62,40 @@ export class OpenSeatComponent implements OnInit {
 		this.DroppedListLength = this.Seats.length;
 		this.SelectPlaceHolder = this.Tickets_dataSource[this.Categoryindex].name
 		this.getflexiBlock()
+		this.formInit()
 	}
-	// formInit(){
-	// 	this.seatSelectform = this.fb.group({
-	// 		unitArr: this.fb.array(
-	// 		  this.units.map((unit) => {
-	// 			return this.fb.control(false)
-	// 		  })
-	// 		)
-	// 	  });
-	// }
+	formInit() {
+		this.form = this.fb.group({
+			name: '',
+			category: '',
+			age_start: '',
+			age_end: '',
+			age:''
+		});
+		let form = this.form.value
+		let keys = Object.keys(form)
+			// Replacing age_start and age_end with age
+			keys.splice(2, 2)
+		this.form.valueChanges.subscribe(res => {
+			console.log(res)
+			for (let key of keys) {
+				console.log(key)
+
+				if (res[key] !== '') {
+					this.FormKeys.push(key)
+				}
+				else {
+					console.log(key)
+					let index = this.FormKeys.indexOf(key)
+					if (index !== -1) {
+						this.FormKeys.splice(index, 1)
+					}
+				}
+			}
+			this.FormKeys = [... new Set(this.FormKeys)]
+			console.log(this.FormKeys)
+		})
+	}
 	getflexiBlock() {
 		const flexiBlock = JSON.parse(localStorage.getItem('flexiBlock'))
 		if (flexiBlock?.length) {
@@ -88,10 +115,10 @@ export class OpenSeatComponent implements OnInit {
 			this.AllSelected = e.checked
 		}
 	}
-	categorySelection(e: any) {
-		this.category_value = e
-		this.ticketFilter(this.category_value, filterBy.Category)
-	}
+	// categorySelection(e: any) {
+	// 	this.category_value = e
+	// 	this.ticketFilter(this.category_value, filterBy.Category)
+	// }
 	getSeats() {
 		this.Seats.forEach((ele: any, index: any) => {
 			ele.seat = []
@@ -152,7 +179,7 @@ export class OpenSeatComponent implements OnInit {
 		// If current element has ".selected"
 		if (event.item.element.nativeElement.classList.contains("selected")) {
 			this.multiDrag.dropListDropped(event);
-			this.removeFromTicketMainArray(event.container.data, event.previousContainer.data)
+			//	this.removeFromTicketMainArray(event.container.data, event.previousContainer.data)
 		}
 		// If dont have ".selected" (normal case)
 		else {
@@ -163,7 +190,7 @@ export class OpenSeatComponent implements OnInit {
 					event.container.data,
 					event.previousIndex,
 					event.currentIndex);
-				this.removeFromTicketMainArray(event.container.data, event.previousContainer.data)
+				//this.removeFromTicketMainArray(event.container.data, event.previousContainer.data)
 			}
 		}
 		//console.log(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex)
@@ -195,27 +222,32 @@ export class OpenSeatComponent implements OnInit {
 			if (!this.Ticket_fullData.includes(item)) {
 				this.Ticket_fullData.push(item)
 			}
-			this.resetFilter()
 		}
 		//this.resetFilter()
-
+	}
+	dragedLastItemMovingBack(item) {
+		if (item) {
+			if (!this.Ticket_fullData.includes(item)) {
+				this.Ticket_fullData.push(item)
+			}
+		}
 	}
 	removeTicket(data, item) {
 		console.log('TicketFullDataPre', this.Ticket_fullData)
 		this.Ticket_fullData.push(item)
 		const index = data.ticket.findIndex(ele => ele.id === item.id)
 		data.ticket.splice(index, 1)
-		this.resetFilter()
+		//this.resetFilter()
 		console.log('TicketFullDataAfter', this.Ticket_fullData)
 	}
-	resetFilter() {
-		this.category_value = 'Select Category'
-		this.clearAgeSlider = 5
-		this.searchName = ''
-		this.ticketFilter('', filterBy.Category)
-		this.ticketFilter('', filterBy.Age)
-		this.ticketFilter('', filterBy.Name)
-	}
+	// resetFilter() {
+	// 	this.category_value = 'Select Category'
+	// 	this.clearAgeSlider = 5
+	// 	this.searchName = ''
+	// 	this.ticketFilter('', filterBy.Category)
+	// 	this.ticketFilter('', filterBy.Age)
+	// 	this.ticketFilter('', filterBy.Name)
+	// }
 	singleItemIndropZone(seats: any, i: any, dropSeatIndex: any) {
 		let extraSeats: any = []
 		let mainIndex = dropSeatIndex
@@ -236,7 +268,8 @@ export class OpenSeatComponent implements OnInit {
 								seats.seat.forEach((seat: any) => {
 									if (mainIndex === this.Seats[dropSeatRow].seat.length) {
 										this.removeLastDroppedItem('', ele)
-										this.removeFromTicketMainArray('', '', ele)
+										//this.removeFromTicketMainArray('', '', ele)
+										this.dragedLastItemMovingBack(ele)
 									}
 									if (mainIndex != this.Seats[dropSeatRow].seat.length) {
 										if (this.Seats[dropSeatRow].seat[mainIndex].ticket.length >= 1) {
@@ -555,12 +588,11 @@ export class OpenSeatComponent implements OnInit {
 					checked: data.isChecked
 				}
 			}
-			console.log(this.selectedBlock,data)
+			console.log(this.selectedBlock, data)
 			this.seatCheck(event, index, data)
 		}
 		else {
 			this.utilitiesService.errorMessage('Please select a block ')
-			//console.log(data, data.isChecked)
 		}
 	}
 	seatCheck(e, index, data) {
@@ -584,9 +616,6 @@ export class OpenSeatComponent implements OnInit {
 			//console.log('event', e.target.checked)
 		}
 	}
-	// isChecked(e) {
-	// 	return e
-	// }
 	seatEdit() {
 		this.seatEditMode = true
 	}
@@ -627,30 +656,57 @@ export class OpenSeatComponent implements OnInit {
 			}
 		})
 	}
-	ticketSearch(e) {
-		this.ticketFilter(e, filterBy.Name)
-	}
-	ticketFilter(query, filterBy) {
-		this.ticketfilterArray = this.Ticket_fullData.filter(ele => {
-			return ele[filterBy].includes(query)
+	// ticketSearch(e) {
+	// 	this.ticketFilter(e, filterBy.Name)
+	// }
+	// ticketFilter(query, filterBy) {
+	// 	this.ticketfilterArray = this.Ticket_fullData.filter(ele => {
+	// 		return ele[filterBy].includes(query)
+	// 	})
+	// }
+	// onSliderChange(event: MatSliderChange) {
+	// 	//console.log(event.value)
+	// 	const ageValue = event.value
+	// 	this.ticketFilter(ageValue, filterBy.Age)
+	// }
+	// clearFiler(filter) {
+	// 	if (filter === filterBy.Category) {
+	// 		this.ticketFilter('', filterBy.Category)
+	// 		this.category_value = 'Select Category'
+	// 	}
+	// 	if (filter === filterBy.Age) {
+	// 		this.ticketFilter('', filterBy.Age)
+	// 		this.clearAgeSlider = 5
+	// 	}
+	// }
+	advanceFilter() {
+		// this.advanceFilterMode = !this.advanceFilterMode
+		const dialogRef = this.dialog.open(SearchAlertComponent,
+			{
+				width: 'auto',
+				height: 'auto'
+			})
+		dialogRef.afterClosed().subscribe(res => {
+			if (res) {
+				this.form.patchValue({
+					age_start: res.age_start,
+					age_end: res.age_end,
+					category: res.category,
+					age:res.age_start
+				})
+			}
 		})
 	}
-	onSliderChange(event: MatSliderChange) {
-		//console.log(event.value)
-		const ageValue = event.value
-		this.ticketFilter(ageValue, filterBy.Age)
-	}
-	clearFiler(filter) {
-		if (filter === filterBy.Category) {
-			this.ticketFilter('', filterBy.Category)
-			this.category_value = 'Select Category'
+	filterRemove(itemName) {
+		console.log(itemName)
+		if (itemName === 'age') {
+			this.form.patchValue({
+				age_start: '',
+				age_end: '',
+				age:''
+			})
+		} else {
+			this.form.get(itemName).setValue('')
 		}
-		if (filter === filterBy.Age) {
-			this.ticketFilter('', filterBy.Age)
-			this.clearAgeSlider = 5
-		}
-	}
-	advanceFilter() {
-		this.advanceFilterMode = !this.advanceFilterMode
 	}
 }
