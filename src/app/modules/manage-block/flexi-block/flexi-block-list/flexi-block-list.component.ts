@@ -23,12 +23,16 @@ export class FlexiBlockListComponent implements OnInit {
     this.getflexiBlock()
   }
   getflexiBlock(){
-    const flexiBlock=JSON.parse(localStorage.getItem('flexiBlock'))
-    if(flexiBlock.length){
+    let flexiBlock
+    if(localStorage.getItem('flexiBlock')){
+      flexiBlock=JSON.parse(localStorage.getItem('flexiBlock'))
+    }
+    console.log(flexiBlock)
+    if(flexiBlock?.length>blocks.length){
       this.dataSource=[...flexiBlock]
     }
     else{
-      this.dataSource=[...blocks]
+      this.dataSource=blocks
     }
   }
   addFlexiBlock() {
@@ -40,6 +44,7 @@ export class FlexiBlockListComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(res=>{
         if(res){
+          res.id=this.dataSource.length+1
           this.dataSource.push(res)
           this.dataSource=[...this.dataSource]
           localStorage.setItem('flexiBlock',JSON.stringify(this.dataSource))

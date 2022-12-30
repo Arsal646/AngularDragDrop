@@ -60,16 +60,16 @@ export const Seats = [
 export const Tickets_dataSource = [
   {
     name: "Category1",
-    numberOfTicket: 4,
+    numberOfTicket: 200,
     tickets: [
     ]
   },
-  {
-    name: "Category2",
-    numberOfTicket: 4,
-    tickets: [
-    ]
-  }
+  // {
+  //   name: "Category2",
+  //   numberOfTicket: 4,
+  //   tickets: [
+  //   ]
+  // }
 ]
 
 export const blocks =

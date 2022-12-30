@@ -22,32 +22,17 @@ export enum filterBy {
 export class OpenSeatComponent implements OnInit {
 	FormKeys = []
 	form: FormGroup
-	filterBy = filterBy
-	seatSelectform: FormGroup
 	blocks = blocks
 	flexi_dataSource = []
-	todo: any = []
-	done: any = []
 	Seats: any = Seats
 	Tickets_dataSource: any = Tickets_dataSource
-	TicketsArray: any = []
-	BackupTicketsArray: any = []
-	DroppedListLength: any = []
-	dropedtickets: any
-	dropSeatRow: any
+	dropSeatRowIndex: any
 	dropSeatIndex: any
 	AllSelected: any
-	Categoryindex = 0
-	SelectPlaceHolder: any
 	checkedSeatList: any = []
 	seatEditMode: boolean = false
 	selectedBlock: any = null
 	Ticket_fullData: any = []
-	ticketfilterArray = []
-	clearAgeSlider
-	category_value = 'Select Category'
-	advanceFilterMode: boolean = false
-	searchName
 	constructor(
 		private location: Location,
 		private utilitiesService: UtilitiesService,
@@ -59,8 +44,7 @@ export class OpenSeatComponent implements OnInit {
 	ngOnInit(): void {
 		this.getTickets()
 		this.getSeats()
-		this.DroppedListLength = this.Seats.length;
-		this.SelectPlaceHolder = this.Tickets_dataSource[this.Categoryindex].name
+		//this.SelectPlaceHolder = this.Tickets_dataSource[this.Categoryindex].name
 		this.getflexiBlock()
 		this.formInit()
 	}
@@ -70,17 +54,16 @@ export class OpenSeatComponent implements OnInit {
 			category: '',
 			age_start: '',
 			age_end: '',
-			age:''
+			age: ''
 		});
 		let form = this.form.value
 		let keys = Object.keys(form)
-			// Replacing age_start and age_end with age
-			keys.splice(2, 2)
+		// Replacing age_start and age_end with age
+		keys.splice(2, 2)
 		this.form.valueChanges.subscribe(res => {
 			console.log(res)
 			for (let key of keys) {
 				console.log(key)
-
 				if (res[key] !== '') {
 					this.FormKeys.push(key)
 				}
@@ -130,6 +113,7 @@ export class OpenSeatComponent implements OnInit {
 						row: index + 1,
 						col: i,
 						isChecked: false,
+						block_id: 0,
 						ticket: [
 						]
 					}
@@ -171,11 +155,10 @@ export class OpenSeatComponent implements OnInit {
 				}
 			}
 		})
-		this.ticketfilterArray = this.Ticket_fullData
 		//console.log(this.Ticket_fullData)
 	}
 	drop(event: CdkDragDrop<string[]>) {
-		console.log(event)
+		//console.log(event)
 		// If current element has ".selected"
 		if (event.item.element.nativeElement.classList.contains("selected")) {
 			this.multiDrag.dropListDropped(event);
@@ -190,96 +173,127 @@ export class OpenSeatComponent implements OnInit {
 					event.container.data,
 					event.previousIndex,
 					event.currentIndex);
-				//this.removeFromTicketMainArray(event.container.data, event.previousContainer.data)
 			}
 		}
-		//console.log(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex)
-		this.dropedtickets = event.container.data
 		this.Seats.forEach((ele: any) => {
 			ele.seat.forEach((dropSeat: any) => {
 				if (dropSeat.ticket === event.container.data) {
-					this.dropSeatRow = dropSeat.row - 1
+					this.dropSeatRowIndex = dropSeat.row - 1
 					this.dropSeatIndex = dropSeat.col - 1
 				}
 			})
 		})
-		this.singleItemIndropZone(event.container.data, this.dropSeatRow, this.dropSeatIndex)
-		////console.log(this.Tickets_dataSource)
-	}
-	removeFromTicketMainArray(dragData?, previousContainerData?, item?) {
-		console.log('dragedItem', dragData.length, 'preContainer', previousContainerData.length)
-		if (dragData.length) {
-			if (previousContainerData.length >= 0) {
-				dragData.forEach(ele => {
-					this.Ticket_fullData = this.Ticket_fullData.filter(item => {
-						return item != ele
-					})
-				})
-				//console.log(this.Ticket_fullData)
-			}
-		}
-		if (item) {
-			if (!this.Ticket_fullData.includes(item)) {
-				this.Ticket_fullData.push(item)
-			}
-		}
-		//this.resetFilter()
-	}
-	dragedLastItemMovingBack(item) {
-		if (item) {
-			if (!this.Ticket_fullData.includes(item)) {
-				this.Ticket_fullData.push(item)
-			}
+		console.log('rowIndex', this.dropSeatRowIndex, 'seatIndex', this.dropSeatIndex)
+		if(this.dropSeatRowIndex!==undefined && this.dropSeatIndex!==undefined){
+			this.singleItemIndropZone(event.container.data, this.dropSeatRowIndex, this.dropSeatIndex)
 		}
 	}
-	removeTicket(data, item) {
-		console.log('TicketFullDataPre', this.Ticket_fullData)
-		this.Ticket_fullData.push(item)
-		const index = data.ticket.findIndex(ele => ele.id === item.id)
-		data.ticket.splice(index, 1)
-		//this.resetFilter()
-		console.log('TicketFullDataAfter', this.Ticket_fullData)
-	}
-	// resetFilter() {
-	// 	this.category_value = 'Select Category'
-	// 	this.clearAgeSlider = 5
-	// 	this.searchName = ''
-	// 	this.ticketFilter('', filterBy.Category)
-	// 	this.ticketFilter('', filterBy.Age)
-	// 	this.ticketFilter('', filterBy.Name)
-	// }
 	singleItemIndropZone(seats: any, i: any, dropSeatIndex: any) {
+		// will keep only 1 ticket in 1 seat and rest of them will store in extraSeats Array
 		let extraSeats: any = []
-		let mainIndex = dropSeatIndex
-		let dropSeatRow: any = i
-		//console.log('mainIndex', mainIndex)
+		//index of seat where ticket dropped
+		let seatIndex = dropSeatIndex
+		//index of seat's row where ticket dropped
+		let rowIndex: any = i
+		//getting seat data where ticket is dropped so that we can use it to find out block info
+		let blockInfo = this.Seats[rowIndex].seat[seatIndex]
+		console.log(blockInfo)
+		let blockSeatArr = []
+		this.Seats.forEach(row => {
+			row.seat.forEach(seat => {
+				if (seat.block_id === blockInfo.block_id) {
+					//creating a new array of specific seat block where list of ticket was dropped
+					blockSeatArr.push(seat)
+				}
+			})
+		})
+	//	console.log(blockSeatArr)
+		if (blockInfo.ticket.length) {
+			this.Seats[rowIndex].seat[seatIndex].ticket = blockInfo.ticket.filter((ele, i) => {
+				//keeping 1 ticket in 1 seat
+				if (i == 0) {
+					return ele
+				}
+				else {
+					//rest of the ticket we are going to push to extraSeat Array
+					extraSeats.push(ele)
+				}
+			})
+		}
+		///console.log(extraSeats)
+		//now we gonna get all the ticket from extraSeat array and will place one by one according to blockSeatArr's Index ...
+		//blockSeatArr is having all the index detail of that specific block seat where we dropped list of ticket
+		if (extraSeats.length) {
+			extraSeats.forEach(seat => {
+					for(const block of blockSeatArr){
+						//check if current rowIndex and seatIndex index has ticket
+					if (this.Seats[block.row - 1].seat[block.col - 1].ticket.length <= 0) {
+						//current rowIndex and seatIndex index has ticket so we gonna change the index to next blockSeatArr index
+						rowIndex = block.row - 1
+						seatIndex = block.col - 1
+					//	console.log('row',rowIndex,'col',seatIndex)
+						//gonna break the loop
+						break;
+					}
+				}
+				if (this.Seats[rowIndex].seat[seatIndex].ticket.length <= 0) {
+					this.Seats[rowIndex].seat[seatIndex].ticket.push(seat)
+				}
+				else {
+					//removing extra ticket from seat block and placing it to ticket array
+					this.dragedLastItemMovingBack(seat)
+				}
+			})
+		}
+	}
+	singleItemIndropZoneTest(seats: any, i: any, dropSeatIndex: any) {
+		console.log('mainSeatArray', this.Seats)
+		//	console.log(seats)
+		let extraSeats: any = []
+		//index of seat where ticket dropped
+		let seatIndex = dropSeatIndex
+		//index of seat's row where ticket dropped
+		let rowIndex: any = i
+		//getting seat data where ticket is dropped so that we can use it to find out block info
+		let blockInfo = this.Seats[rowIndex].seat[seatIndex]
+		console.log(blockInfo)
 		this.Seats.map((seats: any) => {
 			seats.seat.map((seat: any) => {
+				//check if seat where ticket dropped having more than 1 ticket
 				if (seat.ticket.length > 1) {
 					seat.ticket = seat.ticket.filter((child: any, i: any) => {
+						//keeping only 1 ticket in one seat
 						if (i == 0) {
 							return child
 						}
+						//push extra ticket to new array called extraSeats
 						extraSeats.push(child)
 					})
+					console.log('extraSeat', extraSeats)
 					if (extraSeats.length) {
 						extraSeats.forEach((ele: any, i: any) => {
 							this.Seats.forEach((seats: any) => {
 								seats.seat.forEach((seat: any) => {
-									if (mainIndex === this.Seats[dropSeatRow].seat.length) {
-										this.removeLastDroppedItem('', ele)
-										//this.removeFromTicketMainArray('', '', ele)
-										this.dragedLastItemMovingBack(ele)
+									//console.log(seatIndex === this.Seats[rowIndex].seat.length)
+									if (seatIndex === this.Seats[rowIndex].seat.length) {
+										if ((this.Seats.length - 1) > rowIndex) {
+											rowIndex = rowIndex + 1
+											seatIndex = 0
+										} else {
+											this.dragedLastItemMovingBack(ele)
+										}
 									}
-									if (mainIndex != this.Seats[dropSeatRow].seat.length) {
-										if (this.Seats[dropSeatRow].seat[mainIndex].ticket.length >= 1) {
-											mainIndex = mainIndex + 1
+									else {
+										//check if seat having ticket or not
+										if (this.Seats[rowIndex].seat[seatIndex].ticket.length >= 1) {
+											// moving to next index because this seat is already having one ticket
+											seatIndex = seatIndex + 1
 										}
 									}
 								})
 							})
-							if (mainIndex != this.Seats[dropSeatRow].seat.length) {
-								this.Seats[dropSeatRow].seat[mainIndex].ticket.push(ele)
+							if (seatIndex != this.Seats[rowIndex].seat.length) {
+								this.Seats[rowIndex].seat[seatIndex].ticket.push(ele)
 							}
 						})
 					}
@@ -287,27 +301,18 @@ export class OpenSeatComponent implements OnInit {
 			})
 		})
 	}
-	removeLastDroppedItem(main: any, item: any) {
-		// this.Tickets_dataSource.forEach((ele: any, index: any) => {
-		// 	if (ele.name == item.category) {
-		// 		this.Categoryindex = index
-		// 		this.categorySelection(index)
-		// 	}
-		// })
-		// this.SelectPlaceHolder = ''
-		// this.Seats.forEach((element: any) => {
-		// 	element.seat.forEach((seat: any) => {
-		// 		if (seat.ticket.length) {
-		// 			seat.ticket = seat.ticket.filter((val: any) => {
-		// 				return val != item
-		// 			})
-		// 			this.Seats = [...new Set(this.Seats)]
-		// 		}
-		// 	})
-		// 	if (!this.Tickets_dataSource[this.Categoryindex].tickets.includes(item)) {
-		// 		this.Tickets_dataSource[this.Categoryindex].tickets.push(item)
-		// 	}
-		// });
+	dragedLastItemMovingBack(item) {
+		console.log(item)
+		if (item) {
+			if (!this.Ticket_fullData.includes(item)) {
+				this.Ticket_fullData.push(item)
+			}
+		}
+	}
+	removeTicket(data, item) {
+		this.Ticket_fullData.push(item)
+		const index = data.ticket.findIndex(ele => ele.id === item.id)
+		data.ticket.splice(index, 1)
 	}
 	True() {
 		return true
@@ -526,7 +531,7 @@ export class OpenSeatComponent implements OnInit {
 				// Pass item by item to final list
 				for (let i = 0; i < otherListCopy.length; i++) {
 					e.container.data[i] = otherListCopy[i];
-					console.log(e.container.data[i])
+					//console.log(e.container.data[i])
 				}
 			}
 			// Remove ".hide"
@@ -601,6 +606,7 @@ export class OpenSeatComponent implements OnInit {
 				data.backgroundColor = this.selectedBlock?.backgroundColor
 				data.block_id = this.selectedBlock?.id
 				this.checkedSeatList.push(data)
+				console.log(data)
 			}
 			if (e.target.checked === false) {
 				data.backgroundColor = ''
@@ -622,7 +628,9 @@ export class OpenSeatComponent implements OnInit {
 	saveSeat() {
 		this.seatEditMode = false
 		localStorage.setItem('blockSeat', JSON.stringify(this.checkedSeatList))
-		this.selectedBlock = null
+		// let blockSeat=JSON.parse(localStorage.getItem('blockSeat'))
+		// console.log(blockSeat)
+		// this.selectedBlock = null
 	}
 	cancelEdit() {
 		this.checkedSeatList.forEach(ele => {
@@ -631,7 +639,7 @@ export class OpenSeatComponent implements OnInit {
 		this.seatEditMode = false
 	}
 	blockSelection(e) {
-		//console.log(e)
+		console.log(e)
 		this.selectedBlock = e
 	}
 	setBackgroundColor(f) {
@@ -680,7 +688,6 @@ export class OpenSeatComponent implements OnInit {
 	// 	}
 	// }
 	advanceFilter() {
-		// this.advanceFilterMode = !this.advanceFilterMode
 		const dialogRef = this.dialog.open(SearchAlertComponent,
 			{
 				width: 'auto',
@@ -692,7 +699,7 @@ export class OpenSeatComponent implements OnInit {
 					age_start: res.age_start,
 					age_end: res.age_end,
 					category: res.category,
-					age:res.age_start
+					age: res.age_start
 				})
 			}
 		})
@@ -703,7 +710,7 @@ export class OpenSeatComponent implements OnInit {
 			this.form.patchValue({
 				age_start: '',
 				age_end: '',
-				age:''
+				age: ''
 			})
 		} else {
 			this.form.get(itemName).setValue('')
