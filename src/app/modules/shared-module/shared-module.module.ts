@@ -15,13 +15,17 @@ import { BlockComponent } from 'src/pages/home/block/block/block.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularSplitModule } from "angular-split";
+import { HeaderComponent } from 'src/pages/home/common/header/header.component';
+import { NavigationComponent } from 'src/pages/home/common/navigation/navigation.component';
+import { SearchPipe } from 'src/pages/home/common/search.pipe';
+import { CommonModule } from '@angular/common';
+import { FooterComponent } from 'src/pages/home/common/footer/footer.component';
+import { MainComponent } from '../main/main.component';
 @NgModule({
-  declarations: [],
   imports: [
-    BrowserModule,
+    CommonModule,
     DragDropModule,
     MatSelectModule,
-    BrowserAnimationsModule,
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
@@ -32,7 +36,35 @@ import { AngularSplitModule } from "angular-split";
     MatDialogModule,
     ReactiveFormsModule,
     AngularSplitModule,
-    FormsModule
-  ]
+    FormsModule,
+  ],
+  exports:[
+    DragDropModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatTableModule,
+    TooltipModule,
+    NgbModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    ReactiveFormsModule,
+    AngularSplitModule,
+    FormsModule,
+    NavigationComponent,
+    HeaderComponent,
+    SearchPipe,
+    FooterComponent,
+    MainComponent,
+
+  ],
+  declarations: [
+    NavigationComponent,
+    HeaderComponent,
+    SearchPipe,
+    FooterComponent,
+    MainComponent
+  ],
 })
 export class SharedModuleModule { }

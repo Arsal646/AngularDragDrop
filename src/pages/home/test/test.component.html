@@ -1,7 +1,6 @@
 
             <app-main>
-                <main id="js-page-content" role="main" class="page-content">
-                    <ol class="breadcrumb page-breadcrumb ms-3 mt-2">
+                    <ol class="breadcrumb page-breadcrumb ms-2">
                         <li class="breadcrumb-item"><a>SmartAdmin</a></li>
                         <li class="breadcrumb-item">Datatables</li>
                         <li class="breadcrumb-item active">Autofill</li>
@@ -16,44 +15,6 @@
                         <div class="">
                             <button (click)="manageBlock(Seats)" type="button" class="btn btn-outline-dark p-2">Manage
                                 Block</button>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2 mx-3">
-                        <div>
-                            <mat-form-field appearance="outline">
-                                <mat-label>
-                                    <span>Venue</span>
-                                </mat-label>
-                                <mat-select>
-                                    <mat-option value="Venue 1">Venue 1</mat-option>
-                                    <mat-option value="Venue 2">Venue 2</mat-option>
-                                    <mat-option value="Venue 3">Venue 3</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div>
-                            <mat-form-field appearance="outline">
-                                <mat-label>
-                                    <span>Hall</span>
-                                </mat-label>
-                                <mat-select>
-                                    <mat-option value="Hall 1">Hall 1</mat-option>
-                                    <mat-option value="Hall 2">Hall 2</mat-option>
-                                    <mat-option value="Hall 3">Hall 3</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div>
-                            <mat-form-field appearance="outline">
-                                <mat-label>
-                                    <span>Events</span>
-                                </mat-label>
-                                <mat-select>
-                                    <mat-option value="Event 1">Event 1</mat-option>
-                                    <mat-option value="Event 2">Event 2</mat-option>
-                                    <mat-option value="Event 3">Event 3</mat-option>
-                                </mat-select>
-                            </mat-form-field>
                         </div>
                     </div>
                     <div cdkDropListGroup style="display: flex;position: relative; ">
@@ -93,6 +54,7 @@
                                                         <button *ngIf="seatEditMode && checkedSeatList.length"
                                                             (click)="saveSeat()"
                                                             class="btn btn-primary p-2 mx-2 editModeButton">Save</button>
+                                                        <!-- <button  class="btn btn-primary p-2 m-2">Edit</button> -->
                                                         <span *ngIf="!seatEditMode" (click)="seatEdit()" role="button"><i
                                                                 class="bi bi-pencil-square"></i></span>
                                                         <button *ngIf="seatEditMode" (click)="cancelEdit()"
@@ -188,6 +150,8 @@
                                                                 <mat-label>
                                                                     <span>Search</span>
                                                                 </mat-label>
+                                                                <!-- <input type="text" matInput [(ngModel)]="searchName"
+                                                                        (input)="ticketSearch($any($event).target.value)" autocomplete="off"> -->
                                                                 <input type="text" matInput formControlName="name"
                                                                     autocomplete="off">
                                                             </mat-form-field>
@@ -211,6 +175,43 @@
                                                         </ng-container>
                                                     </div>
                                                 </div>
+                                                <!-- <div class="d-flex justify-content-center align-items-center flex-column"
+                                                        *ngIf="advanceFilterMode">
+                                                        <div style="width:100%;">
+                                                            <div class="d-flex justify-content-center align-items-center">
+                                                                <div class="col-10">
+                                                                    <mat-form-field>
+                                                                        <mat-select (selectionChange)="categorySelection($event.value)"
+                                                                            placeholder="Select Category" [(ngModel)]="category_value">
+                                                                            <mat-option *ngFor="let ticket of Tickets_dataSource;let i=index"
+                                                                                [value]="ticket.name">
+                                                                                {{ticket.name}}
+                                                                            </mat-option>
+                                                                        </mat-select>
+                                                                    </mat-form-field>
+                                                                </div>
+                                                                <div class="col-2 text-end">
+                                                                    <i role="button" (click)="clearFiler(filterBy.Category)"
+                                                                        class="bi bi-x-circle col-2"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style="width: 100%;">
+                                                            <div style="font-size: 12px;position: relative;top:14px">Age</div>
+                                                            <div class="d-flex justify-content-center align-items-center">
+                                                                <div class="col-10">
+                                                                    <mat-slider style="width: 100%;" class="col-10" [max]="60" [min]="5"
+                                                                        [step]="1" [thumbLabel]="true" [(ngModel)]="clearAgeSlider"
+                                                                        (change)="onSliderChange($event)">
+                                                                    </mat-slider>
+                                                                </div>
+                                                                <div class="col-2 text-end">
+                                                                    <i role="button" (click)="clearFiler(filterBy.Age)"
+                                                                        class="bi bi-x-circle col-2"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
                                                 <mat-checkbox (change)="selectAll($event)"
                                                     class="example-margin margin select-all">Select
                                                     All</mat-checkbox>
@@ -242,5 +243,4 @@
                             </as-split>
                         </div>
                     </div>
-                </main>
             </app-main>

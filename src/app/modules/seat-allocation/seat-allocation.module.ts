@@ -18,6 +18,7 @@ import { CustomBackgroundColorDirective } from 'src/pages/home/common/custom-bac
 import { MatIconModule, MatRadioModule, MatSliderModule } from '@angular/material';
 import { SearchAlertComponent } from './search-alert/search-alert.component';
 import { SearchPipe } from 'src/pages/home/common/search.pipe';
+import { SharedModuleModule } from '../shared-module/shared-module.module';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,6 @@ import { SearchPipe } from 'src/pages/home/common/search.pipe';
     BlockSeatComponent,
     CustomBackgroundColorDirective,
     SearchAlertComponent,
-    SearchPipe
   ],
   imports: [
     CommonModule,
@@ -43,7 +43,8 @@ import { SearchPipe } from 'src/pages/home/common/search.pipe';
     FormsModule,
     MatIconModule,
     MatRadioModule,
-    MatSliderModule
+    MatSliderModule,
+    SharedModuleModule
 
   ]
   // providers: [

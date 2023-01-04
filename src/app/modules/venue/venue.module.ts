@@ -15,6 +15,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatDialogModule} from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularSplitModule } from "angular-split";
+import { SharedModuleModule } from '../shared-module/shared-module.module';
 
 
 @NgModule({
@@ -38,7 +39,8 @@ import { AngularSplitModule } from "angular-split";
     MatDialogModule,
     ReactiveFormsModule,
     AngularSplitModule,
-    FormsModule
+    FormsModule,
+    SharedModuleModule
   ]
 })
 export class VenueModule { }

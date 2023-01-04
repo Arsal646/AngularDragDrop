@@ -16,6 +16,7 @@ const routes: Routes = [
     path:'block-seat',
     component:BlockSeatComponent
   }
+
 ];
 
 @NgModule({

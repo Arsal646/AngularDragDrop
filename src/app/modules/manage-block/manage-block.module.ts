@@ -8,6 +8,7 @@ import { CreateFlexiBlockComponent } from './flexi-block/create-flexi-block/crea
 import { FlexiBlockListComponent } from './flexi-block/flexi-block-list/flexi-block-list.component';
 import { MatFormFieldModule, MatInputModule, MatSelectModule, MatTableModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModuleModule } from '../shared-module/shared-module.module';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    SharedModuleModule
   ]
 })
 export class ManageBlockModule { }

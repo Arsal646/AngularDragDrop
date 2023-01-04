@@ -1,40 +1,42 @@
-<div class="d-flex p-3">
-  <div class="col md-col10 font-medium">
-    <h4><i role="button" (click)="back()" class="bi bi-arrow-left-circle-fill ml-2 mr-2"></i> Venue Detail</h4>
+<app-main>
+  <div class="d-flex p-3">
+    <div class="col md-col10 font-medium">
+      <h4><i role="button" (click)="back()" class="bi bi-arrow-left-circle-fill ml-2 mr-2"></i> Venue Detail</h4>
+    </div>
+    <div class="col col-md-2 text-end"> <button class="btn btn-outline-primary">Edit
+        Venue</button></div>
   </div>
-  <div class="col col-md-2 text-end"> <button class="btn btn-outline-primary">Edit
-      Venue</button></div>
-</div>
-<div class="d-flex flex-column p-3">
-  <h5 class="card-title text-center">
-    <span class="text-center">{{data?.venue_name}}</span>
-  </h5>
-  <div class="p-3 shadow-sm rounded-1" style=" width: 80vw;margin: 0 auto;">
-    <div class="col md-col10 d-flex gap-1 flex-lg-wrap justify-content-center">
-      <div *ngFor="let item of element;let i=index">
-        <div (click)="hallClick(item)" role='button' class="card" style="width: 20rem;">
-          <div class="card-body cardBody">
-            <div class="d-flex align-items-center justify-content-between">
-              <div>
-                <h5 class="card-title">
-                  <span *ngIf="!item.edit">{{item?.hall_name}}</span>
-                </h5>
-                <h6 class="card-subtitle mb-2 text-muted">
-                  <span *ngIf="!item.edit">Venue Capacity : {{item?.hall_capacity ? item?.hall_capacity:0}}</span>
-                </h6>
-                <h6 class="card-subtitle mb-2 text-muted">
-                  <span *ngIf="!item.edit">Seat Type: {{item?.seat_type }}</span>
-                </h6>
+  <div class="d-flex flex-column p-3">
+    <h5 class="card-title text-center">
+      <span class="text-center">{{data?.venue_name}}</span>
+    </h5>
+    <div class="p-3 shadow-sm rounded-1" style=" width: 80vw;margin: 0 auto;">
+      <div class="col md-col10 d-flex gap-1 flex-lg-wrap justify-content-center">
+        <div *ngFor="let item of element;let i=index">
+          <div (click)="hallClick(item)" role='button' class="card" style="width: 20rem;">
+            <div class="card-body cardBody">
+              <div class="d-flex align-items-center justify-content-between">
+                <div>
+                  <h5 class="card-title">
+                    <span *ngIf="!item.edit">{{item?.hall_name}}</span>
+                  </h5>
+                  <h6 class="card-subtitle mb-2 text-muted">
+                    <span *ngIf="!item.edit">Venue Capacity : {{item?.hall_capacity ? item?.hall_capacity:0}}</span>
+                  </h6>
+                  <h6 class="card-subtitle mb-2 text-muted">
+                    <span *ngIf="!item.edit">Seat Type: {{item?.seat_type }}</span>
+                  </h6>
+                </div>
+                <div>
+                </div>
               </div>
-              <div>
-              </div>
+              <br>
             </div>
-            <br>
           </div>
         </div>
       </div>
-    </div>
-    <div class=" text-end">
+      <div class=" text-end">
+      </div>
     </div>
   </div>
-</div>
+</app-main>

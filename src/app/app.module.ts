@@ -7,7 +7,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import { HomeComponent } from 'src/pages/home/home.component';
 import {MatSelectModule} from '@angular/material/select';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatFormFieldModule, MatInputModule } from '@angular/material';
+import { MatFormFieldModule, MatInputModule, MatRadioModule, MatSliderModule } from '@angular/material';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { SeatsManageComponent } from 'src/pages/home/seats/seats-manage/seats-manage.component';
 import {MatTableModule} from '@angular/material/table';
@@ -18,6 +18,9 @@ import { BlockComponent } from 'src/pages/home/block/block/block.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularSplitModule } from "angular-split";
+import { TestComponent } from 'src/pages/home/test/test.component';
+import {MatExpansionModule} from '@angular/material/expansion';
+import { SharedModuleModule } from './modules/shared-module/shared-module.module';
 
 @NgModule({
   declarations: [
@@ -25,6 +28,7 @@ import { AngularSplitModule } from "angular-split";
     HomeComponent,
     SeatsManageComponent,
     BlockComponent,
+    TestComponent,
 
   ],
   imports: [
@@ -44,6 +48,10 @@ import { AngularSplitModule } from "angular-split";
     ReactiveFormsModule,
     AngularSplitModule,
     FormsModule,
+    MatExpansionModule,
+    MatRadioModule,
+    MatSliderModule,
+    SharedModuleModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
